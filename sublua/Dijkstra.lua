@@ -25,6 +25,29 @@ local function createMap()
   return map
 end
 
+local taskstate = {}
+for i = 1, h * w do taskstate[i] = false end
 local tasks = {}
 local tasknum = 0
+local done = 0
 local tasklim = h * w
+
+local function addtask(idx)
+  if(not taskstate[idx]) then
+    taskstate[idx] = true
+    tasknum = tasknum + 1
+    local taskidx = tasknum % tasklim
+    if taskidx == 0 then taskidx = tasklim end
+    tasks[taskidx] = idx
+  end
+end
+addtask(start_idx)
+
+while(done < tasknum) do
+  done = done + 1
+  local taskidx = done % tasklim
+  if(taskidx == 0) then taskidx = tasklim end
+  local idx = tasks[taskidx]
+  taskstate[idx] = false
+  
+end
