@@ -1,5 +1,5 @@
 local ior = io.input()
-local h, w = ior:read("*n", "*n")
+local h, w = ior:read("*n", "*n", "*l")
 
 local function getindex(i_h, i_w)
   return i_w + (i_h - 1) * w
@@ -49,5 +49,11 @@ while(done < tasknum) do
   if(taskidx == 0) then taskidx = tasklim end
   local idx = tasks[taskidx]
   taskstate[idx] = false
-  
+
+  if(w < idx) then if(map[idx - w] == 1) then addtask(idx - w) end end
+  if(idx <= (h - 1) * w) then if(map[idx + w] == 1) then addtask(idx + w) end end
+  if(1 < w) then
+    if(idx % w ~= 0) then if(map[idx + 1] == 1) then addtask(idx + 1) end end
+    if(idx % w ~= 1) then if(map[idx - 1] == 1) then addtask(idx - 1) end end
+  end
 end
