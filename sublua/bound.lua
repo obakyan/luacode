@@ -1,0 +1,16 @@
+local mfl = math.floor
+local function lower_bound(ary, x)
+  if(x <= ary[1]) then return 1 end
+  local num = #ary
+  if(ary[num] < x) then return num + 1 end
+  local min, max = 1, num
+  while(1 < max - min) do
+    local mid = mfl((min + max) / 2)
+    if(ary[mid] < x) then
+      min = mid
+    else
+      max = mid
+    end
+  end
+  return max
+end
