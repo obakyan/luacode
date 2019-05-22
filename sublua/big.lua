@@ -19,3 +19,29 @@ local function bmul(x, y)
   ret = (ret + x3 * y3 * 930000007) % mod
   return ret
 end
+
+local function modpow(src, pow)
+  local res = 1
+  while (0 < pow) do
+    if (pow % 2 == 1) then
+      res = bmul(res, src)
+      pow = pow - 1
+    end
+    src = bmul(src, src)
+    pow = mfl(pow / 2)
+  end
+  return res;
+end
+
+local function modinv(src)
+  return modpow(src, mod - 2)
+end
+
+local function getConv(n, k)
+  local ret = 1
+  for i = 1, k do
+    ret = bmul(ret, n + 1 - i)
+    ret = bmul(ret, modinv(i))
+  end
+  return ret
+end
