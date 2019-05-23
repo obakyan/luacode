@@ -1,4 +1,3 @@
-
 local mce, mfl, msq, mmi, mma = math.ceil, math.floor, math.sqrt, math.min, math.max
 
 local function getgcd(x, y)
@@ -66,6 +65,32 @@ local function getdivisorparts(x, primes)
     table.insert(tmp, asdf)
   end
   return tmp
+end
+
+local function getdivisor(divisorparts)
+  local t = {}
+  local pat = 1
+  local len = #divisorparts
+  local allpat = 1
+  for i = 1, len do
+    allpat = allpat * (1 + divisorparts[i].cnt)
+  end
+  for t_i_pat = 0, allpat - 1 do
+    local div = allpat
+    local i_pat = t_i_pat
+    local ret = 1
+    for i = 1, len do
+      div = math.floor(div / (divisorparts[i].cnt + 1))
+      local mul = math.floor(i_pat / div)
+      i_pat = i_pat % div
+      for j = 1, mul do
+        ret = ret * divisorparts[i].p
+      end
+    end
+    table.insert(t, ret)
+  end
+  -- table.sort(t)
+  return t
 end
 
 local function getpattern(n, patall, idx)
