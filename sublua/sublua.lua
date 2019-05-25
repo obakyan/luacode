@@ -4,7 +4,7 @@ local function getgcd(x, y)
   while(0 < x and 0 < y) do
     if(x < y) then y = y % x else x = x % y end
   end
-  return math.max(x, y)
+  return mma(x, y)
 end
 
 local function getxor(x, y)
@@ -14,7 +14,7 @@ local function getxor(x, y)
     if((x % 2) + (y % 2) == 1) then
       ret = ret + mul
     end
-    x, y, mul = math.floor(x / 2), math.floor(y / 2), mul * 2
+    x, y, mul = mfl(x / 2), mfl(y / 2), mul * 2
   end
   return ret
 end
@@ -26,7 +26,7 @@ local function getprimes(x)
   for i = 2, x do
     if(allnums[i]) then
       table.insert(primes, i)
-      local lim = math.floor(x / i)
+      local lim = mfl(x / i)
       for j = 2, lim do
         allnums[j * i] = false
       end
@@ -35,11 +35,10 @@ local function getprimes(x)
   return primes
 end
 
--- Lua 5.1 only
 local function getdivisorparts(x, primes)
   local prime_num = #primes
   local tmp = {}
-  local lim = math.ceil(math.sqrt(x))
+  local lim = mce(msq(x))
   local primepos = 1
   local dv = primes[primepos]
   while(primepos <= prime_num and dv <= lim) do
@@ -53,7 +52,7 @@ local function getdivisorparts(x, primes)
         asdf.cnt = asdf.cnt + 1
       end
       table.insert(tmp, asdf)
-      lim = math.ceil(math.sqrt(x))
+      lim = mce(msq(x))
     end
     if(primepos == prime_num) then break end
     primepos = primepos + 1
@@ -80,8 +79,8 @@ local function getdivisor(divisorparts)
     local i_pat = t_i_pat
     local ret = 1
     for i = 1, len do
-      div = math.floor(div / (divisorparts[i].cnt + 1))
-      local mul = math.floor(i_pat / div)
+      div = mfl(div / (divisorparts[i].cnt + 1))
+      local mul = mfl(i_pat / div)
       i_pat = i_pat % div
       for j = 1, mul do
         ret = ret * divisorparts[i].p
@@ -99,8 +98,8 @@ local function getpattern(n, patall, idx)
   local div = patall
   for i = 1, n do used[i] = false end
   for i = n, 1, -1 do
-    div = math.floor(div / i)
-    local v_idx = math.floor(idx / div)
+    div = mfl(div / i)
+    local v_idx = mfl(idx / div)
     idx = idx % div
     local tmp_idx = 0
     for j = 1, n do
