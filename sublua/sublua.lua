@@ -92,6 +92,7 @@ local function getdivisor(divisorparts)
   return t
 end
 
+-- idx is from 0
 local function getpattern(n, patall, idx)
   local used = {}
   local retary = {}
