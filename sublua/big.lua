@@ -37,7 +37,7 @@ local function modinv(src)
   return modpow(src, mod - 2)
 end
 
-local function getConv(n, k)
+local function getComb(n, k)
   local ret = 1
   for i = 1, k do
     ret = bmul(ret, n + 1 - i)
