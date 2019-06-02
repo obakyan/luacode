@@ -1,10 +1,16 @@
 local mce, mfl, msq, mmi, mma = math.ceil, math.floor, math.sqrt, math.min, math.max
 
 local function getgcd(x, y)
-  while(0 < x and 0 < y) do
-    if(x < y) then y = y % x else x = x % y end
+  while 0 < x do
+    x, y = y % x, x
   end
-  return mma(x, y)
+  return y
+end
+
+-- 5.3
+local function getlcm(x, y)
+  local gcd = getgcd(x, y)
+  return (x // gcd) * y
 end
 
 local function getxor(x, y)
