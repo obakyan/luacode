@@ -25,9 +25,7 @@ end
 local function bmul(x, y)
   local x0, y0 = x % 31623, y % 31623
   local x1, y1 = mfl(x / 31623), mfl(y / 31623)
-  local ret = (x1 * y1 * 14122) % mod
-  ret = ret + ((x1 * y0 + x0 * y1) * 31623) % mod
-  return (ret + x0 * y0) % mod
+  return (x1 * y1 * 14122 + (x1 * y0 + x0 * y1) * 31623 + x0 * y0) % mod
 end
 
 local function modpow(src, pow)
