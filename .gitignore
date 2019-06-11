@@ -1,3 +1,5 @@
 atcoder.lua
 yukicoder.lua 
 *.txt
+store
+.DS_Store
