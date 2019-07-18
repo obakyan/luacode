@@ -20,7 +20,7 @@ local function kruskal(n, line)
   local linenum = #line
   for i = 1, linenum do
     local c, i1, i2 = line[i].c, line[i].i1, line[i].i2
-    local r1, r2 = uf_findroot(i1), uf_findroot(i2)
+    local r1, r2 = uf_findroot(i1, parent), uf_findroot(i2, parent)
     parent[i1], parent[i2] = r1, r2
     if r1 ~= r2 then
       parent[r2] = r1
