@@ -41,6 +41,14 @@ local function addtask(idx)
     tasks[taskidx] = idx
   end
 end
+
+local function walk(src, dst)
+  if map[src] + 1 < map[dst] then
+    map[dst] = map[src] + 1
+    addtask(dst)
+  end
+end
+
 addtask(start_idx)
 
 while(done < tasknum) do
@@ -50,10 +58,10 @@ while(done < tasknum) do
   local idx = tasks[taskidx]
   taskstate[idx] = false
 
-  if(w < idx) then if(map[idx - w] == 1) then addtask(idx - w) end end
-  if(idx <= (h - 1) * w) then if(map[idx + w] == 1) then addtask(idx + w) end end
-  if(1 < w) then
-    if(idx % w ~= 0) then if(map[idx + 1] == 1) then addtask(idx + 1) end end
-    if(idx % w ~= 1) then if(map[idx - 1] == 1) then addtask(idx - 1) end end
+  if w < idx then walk(idx, idx - w) end
+  if idx <= (h - 1) * w then walk(idx, idx + w) end
+  if 1 < w then
+    if idx % w ~= 0 then walk(idx, idx + 1) end
+    if idx % w ~= 1 then walk(idx, idx - 1) end
   end
 end
