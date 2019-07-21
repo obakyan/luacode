@@ -1,14 +1,7 @@
 local mod = 1000000007
 local mfl = math.floor
---[[
-10^9 + 7
-a + b * 10^4 + c * 10^8
-0 <= a, b < 10^4
-0 <= c <= 10
-(a + b * 10^4 + c * 10^8)(x + y * 10^4 + z * 10^8)
-= ax + (ay + bx)10^4 + (az + by + cx)10^4 * 10^4 + (bz + cy)10^12 + cz10^16
-10^16 = 930000007 mod 10^9+7
-]]
+
+-- OBSOLETE
 local function bmulslow(x, y)
   local x1, y1 = x % 10000, y % 10000
   local x2, y2 = mfl(x / 10000) % 10000, mfl(y / 10000) % 10000
@@ -16,16 +9,24 @@ local function bmulslow(x, y)
   local ret = (x1 * y1 + (x1 * y2 + x2 * y1) * 10000) % mod
   ret = (ret + (x1 * y3 + x2 * y2 + x3 * y1) * 10000 % mod * 10000 % mod) % mod
   ret = (ret + (x2 * y3 + x3 * y2) * 10000 % mod * 10000 % mod * 10000) % mod
-  -- ret = (ret + x3 * y3 * 930000007) % mod
   ret = (ret +  x3 * y3 * 10000 % mod * 10000 % mod * 10000 % mod * 10000) % mod
   return ret
 end
 
 -- 10^9 + 7 only
+-- (31623^2) % 1000000007 = 14122
 local function bmul(x, y)
   local x0, y0 = x % 31623, y % 31623
   local x1, y1 = mfl(x / 31623), mfl(y / 31623)
   return (x1 * y1 * 14122 + (x1 * y0 + x0 * y1) * 31623 + x0 * y0) % mod
+end
+
+local function badd(x, y)
+  return (x + y) % mod
+end
+
+local function bsub(x, y)
+  return x < y and x - y + mod or x - y
 end
 
 local function modpow(src, pow)
