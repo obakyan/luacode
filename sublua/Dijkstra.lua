@@ -65,3 +65,38 @@ while(done < tasknum) do
     if idx % w ~= 1 then walk(idx, idx - 1) end
   end
 end
+
+
+local function getlength(start_idx, dst_idx)
+  local taskstate = {}
+  for i = 1, n do taskstate[i] = false end
+  local tasks = {}
+  local tasknum = 0
+  local done = 0
+
+  local len = {}
+  for i = 1, n do len[i] = inf end
+  len[start_idx] = 0
+
+  local function addtask(idx)
+    if(not taskstate[idx]) then
+      taskstate[idx] = true
+      tasknum = tasknum + 1
+      tasks[tasknum] = idx
+    end
+  end
+  addtask(start_idx)
+
+  while(done < tasknum) do
+    done = done + 1
+    local src = tasks[done]
+    taskstate[src] = false
+    for dst, cost in pairs(edge[src]) do
+      if len[src] + cost < len[dst] then
+        len[dst] = len[src] + cost
+        addtask(dst)
+      end
+    end
+  end
+  return len[dst_idx]
+end
