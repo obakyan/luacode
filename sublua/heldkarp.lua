@@ -9,7 +9,8 @@ local function heldkarp_prepare(n)
   end
   for i = 1, n do
     for j = 1, tot - 1 do
-      alltask[i][j] = 0
+      -- set inf value
+      alltask[i][j] = 1000000007
     end
   end
   for i = 1, tot - 1 do
@@ -46,7 +47,7 @@ local function heldkarp_doall(n, alltask, stagetask)
           local tmp = used
           for j = 1, n do
             if tmp % 2 == 0 then
-              -- alltask[j][used + mul] =
+              -- alltask[j][used + mul] = val + func(from i to j)
             else
               tmp = tmp - 1
             end
