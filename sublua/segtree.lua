@@ -25,8 +25,13 @@ SegTree.create = function(self, ary, func, emptyvalue)
   end
 end
 SegTree.getRange = function(self, left, right)
+  if left == right then return self.stage[self.stagenum][left] end
+  local start_stage = 1
+  while right - left + 1 < self.size[start_stage] do
+    start_stage = start_stage + 1
+  end
   local ret = self.emptyvalue
-  local tasks = {{1, left, right}}
+  local tasks = {{start_stage, left, right}}
   while 0 < #tasks do
     local task = tasks[#tasks]
     table.remove(tasks)
