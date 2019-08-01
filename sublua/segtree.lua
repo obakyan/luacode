@@ -28,15 +28,14 @@ SegTree.getRange = function(self, left, right)
     start_stage = start_stage + 1
   end
   local ret = self.emptyvalue
-  local tasks = {{start_stage, left, right}}
-  while 0 < #tasks do
-    local task = tasks[#tasks]
-    table.remove(tasks)
-    local stage, l, r = task[1], task[2], task[3]
+  local t1, t2, t3 = {start_stage}, {left}, {right}
+  while 0 < #t1 do
+    local stage, l, r = t1[#t1], t2[#t1], t3[#t1]
+    table.remove(t1) table.remove(t2) table.remove(t3)
     local sz = self.size[stage]
     if (l - 1) % sz ~= 0 then
       local newr = mce((l - 1) / sz) * sz
-      table.insert(tasks, {stage + 1, l, mmi(r, newr)})
+      table.insert(t1, stage + 1) table.insert(t2, l) table.insert(t3, mmi(r, newr))
       l = newr + 1
     end
     if sz <= r + 1 - l then
@@ -45,7 +44,7 @@ SegTree.getRange = function(self, left, right)
       l = l + sz
     end
     if l <= r then
-      table.insert(tasks, {stage + 1, l, r})
+      table.insert(t1, stage + 1) table.insert(t2, l) table.insert(t3, r)
     end
   end
   return ret
@@ -76,7 +75,7 @@ for i = 1, 5 do
   end
 end
 print("---")
-test:setValue(3, 10)
+test:setValue(3, 103)
 for i = 1, 5 do
   for j = i, 5 do
     print(i, j, test:getRange(i, j))
