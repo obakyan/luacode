@@ -34,13 +34,12 @@ SegTree.getRange = function(self, left, right)
     table.remove(t1) table.remove(t2) table.remove(t3)
     local sz = self.size[stage]
     if (l - 1) % sz ~= 0 then
-      local newr = mce((l - 1) / sz) * sz
-      table.insert(t1, stage + 1) table.insert(t2, l) table.insert(t3, mmi(r, newr))
+      local newr = mmi(r, mce((l - 1) / sz) * sz)
+      table.insert(t1, stage + 1) table.insert(t2, l) table.insert(t3, newr)
       l = newr + 1
     end
     if sz <= r + 1 - l then
-      local pos = mce(l / sz)
-      ret = self.func(ret, self.stage[stage][pos])
+      ret = self.func(ret, self.stage[stage][mce(l / sz)])
       l = l + sz
     end
     if l <= r then
