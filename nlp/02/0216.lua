@@ -14,9 +14,10 @@ end
 r:close()
 
 line_per_file = math.floor(#t / n)
-w = io.open("z_0216.txt", "w")
-
-for i = #t + 1 - n, #t do
-  w:write(t[i] .. "\n")
+for i = 1, n do
+  local w = io.open("z_0216_" .. i .. ".txt", "w")
+  for j = 1 + (i - 1) * line_per_file, math.min(#t, i * line_per_file) do
+    w:write(t[j] .. "\n")
+  end
+  w:close()
 end
-w:close()
