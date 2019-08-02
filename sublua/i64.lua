@@ -1,0 +1,13 @@
+local mfl = math.floor
+
+local i64 = {v = {0, 0}, c = 1000000000}
+i64.inc = function(self, x)
+  assert(0 <= x, "use dec")
+  self.v[2] = self.v[2] + x
+  self.v[1], self.v[2] = self.v[1] + mfl(self.v[2] / big), self.v[2] % big
+end
+i64.dump = function(self)
+  local s2 = 0 < self.v[1] and string.format("%09d", self.v[2]) or self.v[2]
+  local s1 = 0 < self.v[1] and self.v[1] or ""
+  return s1 .. s2
+end
