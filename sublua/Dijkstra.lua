@@ -33,7 +33,7 @@ local done = 0
 local tasklim = h * w
 
 local function addtask(idx)
-  if(not taskstate[idx]) then
+  if not taskstate[idx] then
     taskstate[idx] = true
     tasknum = tasknum + 1
     local taskidx = tasknum % tasklim
@@ -51,10 +51,10 @@ end
 
 addtask(start_idx)
 
-while(done < tasknum) do
+while done < tasknum do
   done = done + 1
   local taskidx = done % tasklim
-  if(taskidx == 0) then taskidx = tasklim end
+  if taskidx == 0 then taskidx = tasklim end
   local idx = tasks[taskidx]
   taskstate[idx] = false
 
@@ -79,7 +79,7 @@ local function getlength(start_idx, dst_idx)
   len[start_idx] = 0
 
   local function addtask(idx)
-    if(not taskstate[idx]) then
+    if not taskstate[idx] then
       taskstate[idx] = true
       tasknum = tasknum + 1
       tasks[tasknum] = idx
@@ -87,7 +87,7 @@ local function getlength(start_idx, dst_idx)
   end
   addtask(start_idx)
 
-  while(done < tasknum) do
+  while done < tasknum do
     done = done + 1
     local src = tasks[done]
     taskstate[src] = false
