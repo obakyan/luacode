@@ -1,5 +1,12 @@
 local mfl = math.floor
 
+local function printll(llnumber)
+  --usage: printll(2 * 1234567890123456LL)
+  local str = tostring(llnumber):gsub("LL", "")
+  print(str)
+end
+
+
 local i64 = {v = {0, 0}, c = 10000000000}
 i64.inc = function(self, x)
   assert(0 <= x, "use dec")
