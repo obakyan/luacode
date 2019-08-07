@@ -1,5 +1,6 @@
 atcoder.lua
 yukicoder.lua 
 *.txt
+*.json
 store
 .DS_Store
