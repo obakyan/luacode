@@ -44,9 +44,9 @@ local function solve(s, t, tsum)
     local lb = lower_bound(t, s[i])
     if 1 < lb then
       len = len + s[i] * (lb - 1) - tsum[lb - 1]
-      len = len + tsum[n] - tsum[lb - 1] - s[i] * (m - lb + 1)
+      len = len + tsum[m] - tsum[lb - 1] - s[i] * (m - lb + 1)
     else
-      len = len + tsum[n] - m * s[i]
+      len = len + tsum[m] - m * s[i]
     end
   end
   return len
