@@ -91,12 +91,16 @@ local function getlength(start_idx, dst_idx)
     done = done + 1
     local src = tasks[done]
     taskstate[src] = false
+    local tmp = {}
     for dst, cost in pairs(edge[src]) do
       if len[src] + cost < len[dst] then
         len[dst] = len[src] + cost
-        addtask(dst)
+        -- addtask(dst)
+        table.insert(tmp, dst)
       end
     end
+    table.sort(tmp, function(a, b) return len[a] < len[b] end)
+    for i = 1, #tmp do addtask(tmp[i]) end
   end
   return len[dst_idx]
 end
