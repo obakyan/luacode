@@ -17,18 +17,6 @@ local function bsub(x, y)
   return x < y and x - y + mod or x - y
 end
 
--- OBSOLETE
-local function bmulslow(x, y)
-  local x1, y1 = x % 10000, y % 10000
-  local x2, y2 = mfl(x / 10000) % 10000, mfl(y / 10000) % 10000
-  local x3, y3 = mfl(x / 100000000), mfl(y / 100000000)
-  local ret = (x1 * y1 + (x1 * y2 + x2 * y1) * 10000) % mod
-  ret = (ret + (x1 * y3 + x2 * y2 + x3 * y1) * 10000 % mod * 10000 % mod) % mod
-  ret = (ret + (x2 * y3 + x3 * y2) * 10000 % mod * 10000 % mod * 10000) % mod
-  ret = (ret +  x3 * y3 * 10000 % mod * 10000 % mod * 10000 % mod * 10000) % mod
-  return ret
-end
-
 local function modpow(src, pow)
   local res = 1
   while (0 < pow) do
@@ -66,4 +54,17 @@ local function goldpow(z, r, pow)
     pow = mfl(pow / 2)
   end
   return resz;
+end
+
+
+-- OBSOLETE
+local function bmulslow(x, y)
+  local x1, y1 = x % 10000, y % 10000
+  local x2, y2 = mfl(x / 10000) % 10000, mfl(y / 10000) % 10000
+  local x3, y3 = mfl(x / 100000000), mfl(y / 100000000)
+  local ret = (x1 * y1 + (x1 * y2 + x2 * y1) * 10000) % mod
+  ret = (ret + (x1 * y3 + x2 * y2 + x3 * y1) * 10000 % mod * 10000 % mod) % mod
+  ret = (ret + (x2 * y3 + x3 * y2) * 10000 % mod * 10000 % mod * 10000) % mod
+  ret = (ret +  x3 * y3 * 10000 % mod * 10000 % mod * 10000 % mod * 10000) % mod
+  return ret
 end
