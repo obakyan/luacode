@@ -1,5 +1,4 @@
-local ior = io.input()
-local h, w = ior:read("*n", "*n", "*l")
+local h, w = io.read("*n", "*n", "*l")
 
 local function getindex(i_h, i_w)
   return i_w + (i_h - 1) * w
@@ -10,16 +9,16 @@ local function createMap()
   local map = {}
   for i = 1, h * w do map[i] = 0 end
   for i_h = 1, h do
-    -- str = ior:read()
+    -- str = io.read()
     -- for i_w = 1, w do
     --   local idx = getindex(i_h, i_w)
-    --   if(str:sub(i_w, i_w) == "#") then
+    --   if str:sub(i_w, i_w) == "#" then
     --     map[idx] = 1
     --   end
     -- end
     for i_w = 1, w do
       local idx = getindex(i_h, i_w)
-      map[idx] = ior:read("*n")
+      map[idx] = io.read("*n")
     end
   end
   return map
