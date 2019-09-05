@@ -27,6 +27,12 @@ AvlTree.recalcCount = function(self, node)
     end
   end
 end
+AvlTree.recalcCountAll = function(self, node)
+  while node do
+    self:recalcCount(node)
+    node = node.p
+  end
+end
 
 AvlTree.rotR = function(self, child, parent)
   local granp = parent.p
@@ -42,9 +48,7 @@ AvlTree.rotR = function(self, child, parent)
   else -- granp == nil
     self.root = child
   end
-  self:recalcCount(parent)
-  self:recalcCount(child)
-  self:recalcCount(granp)
+  self:recalcCountAll(parent)
 end
 
 AvlTree.rotL = function(self, child, parent)
@@ -61,9 +65,7 @@ AvlTree.rotL = function(self, child, parent)
   else -- granp == nil
     self.root = child
   end
-  self:recalcCount(parent)
-  self:recalcCount(child)
-  self:recalcCount(granp)
+  self:recalcCountAll(parent)
 end
 
 AvlTree.add = function(self, val)
@@ -71,7 +73,6 @@ AvlTree.add = function(self, val)
   local added = false
   while not added do
     if self.lessthan(val, pos.v) then
-      pos.lc = pos.lc + 1
       if pos.l then
         pos = pos.l
       else
@@ -80,7 +81,6 @@ AvlTree.add = function(self, val)
         added = true
       end
     else
-      pos.rc = pos.rc + 1
       if pos.r then
         pos = pos.r
       else
@@ -90,6 +90,7 @@ AvlTree.add = function(self, val)
       end
     end
   end
+  self:recalcCountAll(pos)
   local resolve_child = pos
   while resolve_child do
     local child, parent = resolve_child, resolve_child.p
@@ -137,7 +138,7 @@ end
 
 -- test
 local a = AvlTree.new(1, function(x, y) return x < y end)
-for i = 2, 7 do a:add(i) end
+for i = 2, 15 do a:add(i) end
 local tasks = {a.root}
 local done = 0
 while done < #tasks do
