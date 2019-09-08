@@ -7,23 +7,17 @@ AvlTree.makenode = function(self, val, parent)
   -- node.l, node.r = nil, nil
   return node
 end
-AvlTree.create = function(self, firstval, lessthan)
-  local node = self:makenode(firstval, nil)
-  self.root = node
+AvlTree.create = function(self, lessthan)
   self.lessthan = lessthan
 end
 
 AvlTree.recalcCount = function(self, node)
   if node then
-    if node.l then
-      node.lc = 1 + mma(node.l.lc, node.l.rc)
-    else
-      node.lc = 0
+    if node.l then node.lc = 1 + mma(node.l.lc, node.l.rc)
+    else node.lc = 0
     end
-    if node.r then
-      node.rc = 1 + mma(node.r.lc, node.r.rc)
-    else
-      node.rc = 0
+    if node.r then node.rc = 1 + mma(node.r.lc, node.r.rc)
+    else node.rc = 0
     end
   end
 end
@@ -69,6 +63,7 @@ AvlTree.rotL = function(self, child, parent)
 end
 
 AvlTree.add = function(self, val)
+  if not self.root then self.root = self:makenode(val) return end
   local pos = self.root
   local added = false
   while not added do
@@ -105,8 +100,9 @@ AvlTree.add = function(self, val)
         if child.lc - 1 == child.rc then
           self:rotR(child, parent)
         else
-          self:rotL(child.r, child)
-          self:rotR(child.r, parent)
+          local cr = child.r
+          self:rotL(cr, child)
+          self:rotR(cr, parent)
         end
       end
     else -- parent.r == child
@@ -116,40 +112,90 @@ AvlTree.add = function(self, val)
         if child.rc - 1 == child.lc then
           self:rotL(child, parent)
         else
-          self:rotR(child.l, child)
-          self:rotL(child.l, parent)
+          local cl = child.l
+          self:rotR(cl, child)
+          self:rotL(cl, parent)
         end
       end
     end
   end
 end
 
-AvlTree.pop = function(self)
-
+AvlTree.rmsub = function(self, node)
+  while node do
+    self:recalcCount(node)
+    if node.lc == node.rc then
+      node = node.p
+    elseif node.lc + 1 == node.rc then
+      self:recalcCountAll(node.p)
+      node = nil
+    else
+      if node.r.lc == node.r.rc then
+        self:rotL(node.r, node)
+        self:recalcCountAll(node)
+        node = nil
+      elseif node.r.lc + 1 == node.r.rc then
+        local nr = node.r
+        self:rotL(nr, node)
+        node = nr
+      else
+        local nrl = node.r.l
+        self:rotR(nrl, node.r)
+        self:rotL(nrl, node)
+        node = nrl
+      end
+    end
+  end
 end
 
-AvlTree.new = function(firstval, lessthan)
+AvlTree.pop = function(self)
+  local edge = self.root
+  while edge.l do
+    edge = edge.l
+  end
+  local v = edge.v
+  if edge.p then
+    if edge.r then edge.r.p = edge.p end
+    edge.p.l = edge.r
+    self:rmsub(edge.p)
+  else
+    if edge.r then edge.r.p = nil end
+    self.root = edge.r
+  end
+  return v
+end
+
+AvlTree.new = function(lessthan)
     local obj = {}
     setmetatable(obj, {__index = AvlTree})
-    obj:create(firstval, lessthan)
+    obj:create(lessthan)
     return obj
 end
 
 
 -- test
-local a = AvlTree.new(1, function(x, y) return x < y end)
-for i = 2, 15 do a:add(i) end
-local tasks = {a.root}
-local done = 0
-while done < #tasks do
-  done = done + 1
-  local node = tasks[done]
-  if node.p then
-    print(node.p.v .. "_" .. node.v)
-  else
-    print(node.v)
+local a = AvlTree.new(function(x, y) return x < y end)
+for i = 15, 1, -1 do a:add(i) end
+local function dumptest()
+  print("--- dump ---")
+  local tasks = {a.root}
+  local done = 0
+  while done < #tasks do
+    done = done + 1
+    local node = tasks[done]
+    if node.p then
+      print(node.p.v .. "_" .. node.v)
+    else
+      print(node.v)
+    end
+    print("  " .. node.lc .. " " .. node.rc)
+    if node.l then table.insert(tasks, node.l) end
+    if node.r then table.insert(tasks, node.r) end
   end
-  print("  " .. node.lc .. " " .. node.rc)
-  if node.l then table.insert(tasks, node.l) end
-  if node.r then table.insert(tasks, node.r) end
 end
+dumptest()
+print("--- pop ---")
+for i = 1, 8 do
+  print(a:pop())
+end
+dumptest()
