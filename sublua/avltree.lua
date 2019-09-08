@@ -85,17 +85,16 @@ AvlTree.add = function(self, val)
       end
     end
   end
-  self:recalcCountAll(pos)
-  local resolve_child = pos
-  while resolve_child do
-    local child, parent = resolve_child, resolve_child.p
-    resolve_child = nil
+  while pos do
+    local child, parent = pos, pos.p
     if not parent then
       break
     end
+    self:recalcCount(child)
+    self:recalcCount(parent)
     if parent.l == child then
       if parent.lc - 1 == parent.rc then
-        resolve_child = parent
+        pos = parent
       elseif parent.lc - 2 == parent.rc then
         if child.lc - 1 == child.rc then
           self:rotR(child, parent)
@@ -104,10 +103,15 @@ AvlTree.add = function(self, val)
           self:rotL(cr, child)
           self:rotR(cr, parent)
         end
+        self:recalcCountAll(child)
+        pos = nil
+      else
+        self:recalcCountAll(child)
+        pos = nil
       end
     else -- parent.r == child
       if parent.rc - 1 == parent.lc then
-        resolve_child = parent
+        pos = parent
       elseif parent.rc - 2 == parent.lc then
         if child.rc - 1 == child.lc then
           self:rotL(child, parent)
@@ -116,6 +120,11 @@ AvlTree.add = function(self, val)
           self:rotR(cl, child)
           self:rotL(cl, parent)
         end
+        self:recalcCountAll(child)
+        pos = nil
+      else
+        self:recalcCountAll(child)
+        pos = nil
       end
     end
   end
