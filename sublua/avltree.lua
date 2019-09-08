@@ -90,12 +90,12 @@ AvlTree.add = function(self, val)
     if not parent then
       break
     end
-    self:recalcCount(child)
     self:recalcCount(parent)
     if parent.l == child then
       if parent.lc - 1 == parent.rc then
         pos = parent
       elseif parent.lc - 2 == parent.rc then
+        self:recalcCount(child)
         if child.lc - 1 == child.rc then
           self:rotR(child, parent)
         else
@@ -113,6 +113,7 @@ AvlTree.add = function(self, val)
       if parent.rc - 1 == parent.lc then
         pos = parent
       elseif parent.rc - 2 == parent.lc then
+        self:recalcCount(child)
         if child.rc - 1 == child.lc then
           self:rotL(child, parent)
         else
