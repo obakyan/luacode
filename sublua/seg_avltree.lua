@@ -124,7 +124,7 @@ SegAvlTree.rotL = function(self, child, parent)
 end
 
 SegAvlTree.add = function(self, val)
-  if not self.root then self.root = self:makenode(val, 0) return end
+  if not self.u[self.root] then self.root = self:makenode(val, 0) return end
   local pos = self.root
   local added = false
   while not added do
