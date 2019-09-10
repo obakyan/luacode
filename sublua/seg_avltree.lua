@@ -164,7 +164,6 @@ SegAvlTree.add = function(self, val)
           self:rotL(cr, child)
           self:rotR(cr, parent)
         end
-        self:recalcCountAll(child)
         pos = nil
       else
         self:recalcCountAll(child)
@@ -182,7 +181,6 @@ SegAvlTree.add = function(self, val)
           self:rotR(cl, child)
           self:rotL(cl, parent)
         end
-        self:recalcCountAll(child)
         pos = nil
       else
         self:recalcCountAll(child)
