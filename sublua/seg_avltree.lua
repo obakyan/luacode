@@ -221,7 +221,7 @@ SegAvlTree.pop = function(self)
     self.l[self.p[node]] = self.r[node]
     self:rmsub(self.p[node])
   else
-    if self.r[node] then self.p[self.r[node]] = 0 end
+    if self.u[self.r[node]] then self.p[self.r[node]] = 0 end
     self.root = self.r[node]
   end
   self.seg:release(node)
