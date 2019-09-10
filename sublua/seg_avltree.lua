@@ -195,7 +195,6 @@ SegAvlTree.rmsub = function(self, node)
     else
       if self.lc[self.r[node]] == self.rc[self.r[node]] then
         self:rotL(self.r[node], node)
-        self:recalcCountAll(node)
         node = nil
       elseif self.lc[self.r[node]] + 1 == self.rc[self.r[node]] then
         local nr = self.r[node]
