@@ -1,12 +1,6 @@
 local mma = math.max
 local mfl, mce, mmi = math.floor, math.ceil, math.min
 local SegForAvl = {}
-local segavl_mergefunc = function(x, y)
-  if x and y then return mmi(x, y)
-  elseif x then return x
-  elseif y then return y
-  else return false end
-end
 SegForAvl.updateAll = function(self)
   for i = self.stagenum - 1, 1, -1 do
     for j = 1, self.cnt[i] do
@@ -33,7 +27,7 @@ SegForAvl.hold = function(self)
   for i = self.stagenum - 1, 1, -1 do
     local dst = mce(idx / 2)
     local rem = dst * 4 - 1 - idx
-    self.stage[i][dst] = segavl_mergefunc(self.stage[i + 1][idx], self.stage[i + 1][rem])
+    self.stage[i][dst] = self.stage[i + 1][idx] or self.stage[i + 1][rem]
     idx = dst
   end
   return ridx
@@ -43,7 +37,7 @@ SegForAvl.release = function(self, idx)
   for i = self.stagenum - 1, 1, -1 do
     local dst = mce(idx / 2)
     local rem = dst * 4 - 1 - idx
-    self.stage[i][dst] = segavl_mergefunc(self.stage[i + 1][idx], self.stage[i + 1][rem])
+    self.stage[i][dst] = self.stage[i + 1][idx] or self.stage[i + 1][rem]
     idx = dst
   end
 end
