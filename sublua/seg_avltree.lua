@@ -254,8 +254,8 @@ local function dumptest()
       print(a.v[node])
     end
     print("  " .. a.lc[node] .. " " .. a.rc[node])
-    if a.u[a.l[node]] then table.insert(tasks, a.l[node]) end
-    if a.u[a.r[node]] then table.insert(tasks, a.r[node]) end
+    if 1 < a.l[node] then table.insert(tasks, a.l[node]) end
+    if 1 < a.r[node] then table.insert(tasks, a.r[node]) end
   end
 end
 dumptest()
