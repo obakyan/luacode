@@ -7,18 +7,19 @@ SegTree.updateAll = function(self)
     end
   end
 end
-SegTree.create = function(self, ary, func, emptyvalue)
+SegTree.create = function(self, n, func, emptyvalue)
   self.func, self.emptyvalue = func, emptyvalue
   local stagenum, mul = 1, 1
   self.cnt, self.stage, self.size = {1}, {{}}, {}
-  while mul < #ary do
+  while mul < n do
     mul, stagenum = mul * 2, stagenum + 1
     self.cnt[stagenum], self.stage[stagenum] = mul, {}
   end
   for i = 1, stagenum do self.size[i] = self.cnt[stagenum + 1 - i] end
   self.stagenum = stagenum
-  for i = 1, #ary do self.stage[stagenum][i] = ary[i] end
-  for i = #ary + 1, mul do self.stage[stagenum][i] = emptyvalue end
+  -- for i = 1, #ary do self.stage[stagenum][i] = ary[i] end
+  -- for i = #ary + 1, mul do self.stage[stagenum][i] = emptyvalue end
+  for i = 1, mul do self.stage[stagenum][i] = emptyvalue end
   self:updateAll()
 end
 SegTree.getRange = function(self, left, right)
@@ -59,10 +60,10 @@ SegTree.setValue = function(self, idx, value, silent)
     end
   end
 end
-SegTree.new = function(ary, func, emptyvalue)
+SegTree.new = function(n, func, emptyvalue)
   local obj = {}
   setmetatable(obj, {__index = SegTree})
-  obj:create(ary, func, emptyvalue)
+  obj:create(n, func, emptyvalue)
   return obj
 end
 
@@ -88,18 +89,5 @@ SegTree.lower_bound = function(self, val)
   return retpos + 1
 end
 
--- TEST
-local test = SegTree.new({1, 2, 3, 4, 5}, function(a, b) return a + b end, 0)
-for i = 1, 5 do
-  for j = i, 5 do
-    print(i, j, test:getRange(i, j))
-  end
-end
-print("---\nLB 9: ", test:lower_bound(9))
-print("---")
-test:setValue(3, 103)
-for i = 1, 5 do
-  for j = i, 5 do
-    print(i, j, test:getRange(i, j))
-  end
-end
+--
+return SegTree
