@@ -13,7 +13,7 @@ SegTree.lower_bound = function(self, val)
       local tmp = self.func(ret, self.stage[stage][mce(l / sz)])
       if tmp < val then
         ret, retpos = tmp, l + sz - 1
-        if sz ~= 1 then table.insert(t1, stage + 1) table.insert(t2, l + sz) table.insert(t3, r) end
+        if l + sz <= r then table.insert(t1, stage + 1) table.insert(t2, l + sz) table.insert(t3, r) end
       else
         if sz ~= 1 then table.insert(t1, stage + 1) table.insert(t2, l) table.insert(t3, l + sz - 2) end
       end
