@@ -67,27 +67,5 @@ SegTree.new = function(n, func, emptyvalue)
   return obj
 end
 
-SegTree.lower_bound = function(self, val)
-  local ret, retpos = self.emptyvalue, 0
-  local t1, t2, t3 = {1}, {1}, {self.size[1]}
-  while 0 < #t1 do
-    local stage, l, r = t1[#t1], t2[#t1], t3[#t1]
-    table.remove(t1) table.remove(t2) table.remove(t3)
-    local sz = self.size[stage]
-    if sz <= r + 1 - l then
-      local tmp = self.func(ret, self.stage[stage][mce(l / sz)])
-      if tmp < val then
-        ret, retpos = tmp, l + sz - 1
-        if sz ~= 1 then table.insert(t1, stage + 1) table.insert(t2, l + sz) table.insert(t3, r) end
-      else
-        if sz ~= 1 then table.insert(t1, stage + 1) table.insert(t2, l) table.insert(t3, l + sz - 2) end
-      end
-    else
-      table.insert(t1, stage + 1) table.insert(t2, l) table.insert(t3, r)
-    end
-  end
-  return retpos + 1
-end
-
 --
 return SegTree

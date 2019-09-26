@@ -9,7 +9,6 @@ for i = 1, 5 do
     print(i, j, test:getRange(i, j))
   end
 end
-print("---\nLB 9: ", test:lower_bound(9))
 print("---")
 test:setValue(3, 103)
 for i = 1, 5 do
