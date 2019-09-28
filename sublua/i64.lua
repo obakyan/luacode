@@ -1,11 +1,20 @@
 local mfl = math.floor
 
-local function printll(llnumber)
-  --usage: printll(2 * 1234567890123456LL)
+local function llprint(llnumber)
+  --usage: llprint(2 * 1234567890123456LL)
   local str = tostring(llnumber):gsub("LL", "")
   print(str)
 end
 
+local function lltonumber(str)
+  -- plus number only
+  local ret = 0LL
+  for i = 1, #str do
+    ret = ret * 10LL
+    ret = ret + tonumber(str:sub(i, i))
+  end
+  return ret
+end
 
 local i64 = {v = {0, 0}, c = 10000000000}
 i64.inc = function(self, x)
