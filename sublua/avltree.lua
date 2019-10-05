@@ -24,10 +24,11 @@ end
 
 AvlTree.recalcCount = function(self, i)
   if 1 < i then
-    if 1 < self.l[i] then self.lc[i] = 1 + mma(self.lc[self.l[i]], self.rc[self.l[i]])
+    local kl, kr = self.l[i], self.r[i]
+    if 1 < kl then self.lc[i] = 1 + mma(self.lc[kl], self.rc[kl])
     else self.lc[i] = 0
     end
-    if 1 < self.r[i] then self.rc[i] = 1 + mma(self.lc[self.r[i]], self.rc[self.r[i]])
+    if 1 < kr then self.rc[i] = 1 + mma(self.lc[kr], self.rc[kr])
     else self.rc[i] = 0
     end
   end
@@ -76,15 +77,14 @@ end
 AvlTree.add = function(self, val)
   if self.root <= 1 then self.root = self:makenode(val, 1) return end
   local pos = self.root
-  local added = false
-  while not added do
+  while true do
     if self.lessthan(val, self.v[pos]) then
       if 1 < self.l[pos] then
         pos = self.l[pos]
       else
         self.l[pos] = self:makenode(val, pos)
         pos = self.l[pos]
-        added = true
+        break
       end
     else
       if 1 < self.r[pos] then
@@ -92,7 +92,7 @@ AvlTree.add = function(self, val)
       else
         self.r[pos] = self:makenode(val, pos)
         pos = self.r[pos]
-        added = true
+        break
       end
     end
   end
@@ -172,12 +172,12 @@ AvlTree.pop = function(self)
     node = self.l[node]
   end
   local v = self.v[node]
-  if 1 < self.p[node] then
-    self.p[self.r[node]] = self.p[node]
-    self.l[self.p[node]] = self.r[node]
-    self:rmsub(self.p[node])
+  local kp = self.p[node]
+  self.p[self.r[node]] = kp
+  if 1 < kp then
+    self.l[kp] = self.r[node]
+    self:rmsub(kp)
   else
-    self.p[self.r[node]] = 1
     self.root = self.r[node]
   end
   table.insert(self.box, node)
