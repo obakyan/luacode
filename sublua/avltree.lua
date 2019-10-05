@@ -102,40 +102,29 @@ AvlTree.add = function(self, val)
       break
     end
     self:recalcCount(parent)
-    if self.l[parent] == child then
-      if self.lc[parent] - 1 == self.rc[parent] then
-        pos = parent
-      elseif self.lc[parent] - 2 == self.rc[parent] then
-        self:recalcCount(child)
-        if self.lc[child] - 1 == self.rc[child] then
-          self:rotR(child, parent)
-        else
-          local cr = self.r[child]
-          self:rotL(cr, child)
-          self:rotR(cr, parent)
-        end
-        pos = 1
+    local lcp_m_rcp = self.lc[parent] - self.rc[parent]
+    if lcp_m_rcp % 2 ~= 0 then -- 1 or -1
+      pos = parent
+    elseif lcp_m_rcp == 2 then
+      if self.lc[child] - 1 == self.rc[child] then
+        self:rotR(child, parent)
       else
-        self:recalcCountAll(child)
-        pos = 1
+        local cr = self.r[child]
+        self:rotL(cr, child)
+        self:rotR(cr, parent)
       end
-    else -- parent.r == child
-      if self.rc[parent] - 1 == self.lc[parent] then
-        pos = parent
-      elseif self.rc[parent] - 2 == self.lc[parent] then
-        self:recalcCount(child)
-        if self.rc[child] - 1 == self.lc[child] then
-          self:rotL(child, parent)
-        else
-          local cl = self.l[child]
-          self:rotR(cl, child)
-          self:rotL(cl, parent)
-        end
-        pos = 1
+      pos = 1
+    elseif lcp_m_rcp == -2 then
+      if self.rc[child] - 1 == self.lc[child] then
+        self:rotL(child, parent)
       else
-        self:recalcCountAll(child)
-        pos = 1
+        local cl = self.l[child]
+        self:rotR(cl, child)
+        self:rotL(cl, parent)
       end
+      pos = 1
+    else
+      pos = 1
     end
   end
 end
@@ -185,10 +174,10 @@ AvlTree.pop = function(self)
 end
 
 AvlTree.new = function(lessthan, n)
-    local obj = {}
-    setmetatable(obj, {__index = AvlTree})
-    obj:create(lessthan, n)
-    return obj
+  local obj = {}
+  setmetatable(obj, {__index = AvlTree})
+  obj:create(lessthan, n)
+  return obj
 end
 
 --
