@@ -19,8 +19,8 @@ end
 
 local function modpow(src, pow)
   local res = 1
-  while (0 < pow) do
-    if (pow % 2 == 1) then
+  while 0 < pow do
+    if pow % 2 == 1 then
       res = bmul(res, src)
       pow = pow - 1
     end
@@ -45,8 +45,8 @@ end
 
 local function goldpow(z, r, pow)
   local resz, resr = 1, 0
-  while (0 < pow) do
-    if (pow % 2 == 1) then
+  while 0 < pow do
+    if pow % 2 == 1 then
       resz, resr = (bmul(resz, z) + 5 * bmul(resr, r)) % mod, (bmul(resz, r) + bmul(resr, z)) % mod
       pow = pow - 1
     end
