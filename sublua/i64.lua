@@ -7,12 +7,14 @@ local function llprint(llnumber)
 end
 
 local function lltonumber(str)
-  -- plus number only
   local ret = 0LL
-  for i = 1, #str do
+  local sign = str:sub(1, 1) ~= "-"
+  local begin = sign and 1 or 2
+  for i = begin, #str do
     ret = ret * 10LL
     ret = ret + tonumber(str:sub(i, i))
   end
+  if not sign then ret = ret * -1LL end
   return ret
 end
 
