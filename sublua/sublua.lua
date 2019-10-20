@@ -1,4 +1,4 @@
-local mce, mfl, msq, mmi, mma = math.ceil, math.floor, math.sqrt, math.min, math.max
+local mce, mfl, msq, mmi, mma, mab = math.ceil, math.floor, math.sqrt, math.min, math.max, math.abs
 
 local function getgcd(x, y)
   while 0 < x do
