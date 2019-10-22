@@ -16,8 +16,8 @@ end
 local function getxor(x, y)
   local ret = 0
   local mul = 1
-  while(0 < x or 0 < y) do
-    if((x % 2) + (y % 2) == 1) then
+  while 0 < x or 0 < y do
+    if (x % 2) + (y % 2) == 1 then
       ret = ret + mul
     end
     x, y, mul = mfl(x / 2), mfl(y / 2), mul * 2
