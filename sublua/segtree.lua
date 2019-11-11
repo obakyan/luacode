@@ -17,8 +17,6 @@ SegTree.create = function(self, n, func, emptyvalue)
   end
   for i = 1, stagenum do self.size[i] = self.cnt[stagenum + 1 - i] end
   self.stagenum = stagenum
-  -- for i = 1, #ary do self.stage[stagenum][i] = ary[i] end
-  -- for i = #ary + 1, mul do self.stage[stagenum][i] = emptyvalue end
   for i = 1, mul do self.stage[stagenum][i] = emptyvalue end
   self:updateAll()
 end
