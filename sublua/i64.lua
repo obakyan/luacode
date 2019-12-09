@@ -12,7 +12,7 @@ local function lltonumber(str)
   local begin = sign and 1 or 2
   for i = begin, #str do
     ret = ret * 10LL
-    ret = ret + tonumber(str:sub(i, i))
+    ret = ret + str:sub(i, i):byte() - 48
   end
   if not sign then ret = ret * -1LL end
   return ret
