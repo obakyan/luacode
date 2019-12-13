@@ -30,7 +30,7 @@ local function getprimes(x)
   local allnums = {}
   for i = 1, x do allnums[i] = true end
   for i = 2, x do
-    if(allnums[i]) then
+    if allnums[i] then
       table.insert(primes, i)
       local lim = mfl(x / i)
       for j = 2, lim do
