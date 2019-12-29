@@ -1,5 +1,6 @@
 local mma = math.max
 -- longest common sub sequence
+-- O(n1 * n2)
 -- "abcd", "bede" -> 2
 -- t1, t2 is array, not string
 local function getLCS(t1, t2)
