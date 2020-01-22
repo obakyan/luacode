@@ -14,15 +14,10 @@ local function getlcm(x, y)
 end
 
 local function getxor(x, y)
-  local ret = 0
-  local mul = 1
-  while 0 < x or 0 < y do
-    if (x % 2) + (y % 2) == 1 then
-      ret = ret + mul
-    end
-    x, y, mul = mfl(x / 2), mfl(y / 2), mul * 2
-  end
-  return ret
+  -- for lua5.3
+  return x ~ y
+  -- for LuaJIT
+  return bit.bxor(x, y)
 end
 
 local function getprimes(x)
