@@ -42,8 +42,8 @@ local function getdivisorparts(x, primes)
   local lim = mce(msq(x))
   local primepos = 1
   local dv = primes[primepos]
-  while(primepos <= prime_num and dv <= lim) do
-    if(x % dv == 0) then
+  while primepos <= prime_num and dv <= lim do
+    if x % dv == 0 then
       local asdf = {}
       asdf.p = dv
       asdf.cnt = 1
@@ -55,11 +55,11 @@ local function getdivisorparts(x, primes)
       table.insert(tmp, asdf)
       lim = mce(msq(x))
     end
-    if(primepos == prime_num) then break end
+    if primepos == prime_num then break end
     primepos = primepos + 1
     dv = primes[primepos]
   end
-  if(x ~= 1) then
+  if x ~= 1 then
     local asdf = {}
     asdf.p, asdf.cnt = x, 1
     table.insert(tmp, asdf)
@@ -105,8 +105,8 @@ local function getpattern(n, patall, idx)
     idx = idx % div
     local tmp_idx = 0
     for j = 1, n do
-      if(not used[j]) then
-        if(tmp_idx == v_idx) then
+      if not used[j] then
+        if tmp_idx == v_idx then
           table.insert(retary, j)
           used[j] = true
           break
