@@ -48,7 +48,7 @@ local function getdivisorparts(x, primes)
       asdf.p = dv
       asdf.cnt = 1
       x = x / dv
-      while(x % dv == 0) do
+      while x % dv == 0 do
         x = x / dv
         asdf.cnt = asdf.cnt + 1
       end
