@@ -28,6 +28,14 @@ TranFFT.initialize = function(self)
     end
     self.binv[i] = y + 1
   end
+  self.wmul = {1}
+  for i = 2, self.n do
+    self.wmul[i] = self:mul(self.wmul[i - 1], self.w)
+  end
+  self.winvmul = {1}
+  for i = 2, self.n do
+    self.winvmul[i] = self:mul(self.winvmul[i - 1], self.winv)
+  end
 end
 
 -- (44893^2) % 1007681537 = 18375
@@ -70,18 +78,10 @@ TranFFT.fft_common = function(self, ary, wmul)
 end
 
 TranFFT.fft = function(self, ary)
-  local wmul = {1}
-  for i = 2, self.n do
-    wmul[i] = self:mul(wmul[i - 1], self.w)
-  end
-  return self:fft_common(ary, wmul)
+  return self:fft_common(ary, self.wmul)
 end
 TranFFT.ifft = function(self, ary)
-  local wmul = {1}
-  for i = 2, self.n do
-    wmul[i] = self:mul(wmul[i - 1], self.winv)
-  end
-  local ret = self:fft_common(ary, wmul)
+  local ret = self:fft_common(ary, self.winvmul)
   for i = 1, self.n do
     ret[i] = self:mul(ret[i], self.ninv)
   end
