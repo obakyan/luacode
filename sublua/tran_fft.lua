@@ -56,21 +56,15 @@ TranFFT.fft_common = function(self, ary, wmul)
     ret[i] = ary[self.binv[i]]
   end
   for i = 1, self.size do
-    local tmpdst = {}
-    for j = 1, self.n do
-      tmpdst[j] = 0
-    end
     local step_size = self.p2[i]
     local step_count = self.p2[self.size + 1 - i]
     for istep = 1, step_count do
       local ofst = (istep - 1) * step_size * 2
       for j = 1, step_size do
-        tmpdst[ofst + j] = self:add(ret[ofst + j], self:mul(ret[ofst + step_size + j], wmul[1 + (j - 1) * step_count]))
-        tmpdst[ofst + step_size + j] = self:add(ret[ofst + j], self:mul(ret[ofst + step_size + j], wmul[1 + (j + step_size - 1) * step_count]))
+        local a1, a2 = ret[ofst + j], ret[ofst + step_size + j]
+        ret[ofst + j] = self:add(a1, self:mul(a2, wmul[1 + (j - 1) * step_count]))
+        ret[ofst + step_size + j] = self:add(a1, self:mul(a2, wmul[1 + (j + step_size - 1) * step_count]))
       end
-    end
-    for j = 1, self.n do
-      ret[j] = tmpdst[j]
     end
   end
   return ret
