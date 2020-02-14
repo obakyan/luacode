@@ -1,4 +1,3 @@
--- TRAN FFT
 local mfl = math.floor
 local TranFFT = {}
 
