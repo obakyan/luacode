@@ -74,7 +74,7 @@ AvlTree.rotL = function(self, child, parent)
   self:recalcCountAll(parent)
 end
 
-AvlTree.add = function(self, val)
+AvlTree.push = function(self, val)
   if self.root <= 1 then self.root = self:makenode(val, 1) return end
   local pos = self.root
   while true do
