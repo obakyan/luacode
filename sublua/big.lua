@@ -46,11 +46,12 @@ end
 
 local function getComb(n, k)
   local ret = 1
+  local inv = 1
   for i = 1, k do
     ret = bmul(ret, n + 1 - i)
-    ret = bmul(ret, modinv(i))
+    inv = bmul(inv, i)
   end
-  return ret
+  return bmul(ret, modinv(inv))
 end
 
 local function goldpow(z, r, pow)
