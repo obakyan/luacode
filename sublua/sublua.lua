@@ -118,3 +118,11 @@ local function getpattern(n, patall, idx)
   end
   return retary
 end
+
+-- reactive problem
+local function query(str)
+  io.write(str .. "\n")
+  io.flush()
+  local ret = io.read("*l")
+  return ret
+end
