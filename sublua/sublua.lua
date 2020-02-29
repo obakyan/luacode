@@ -67,7 +67,12 @@ local function getdivisorparts(x, primes)
   return tmp
 end
 
-local function getdivisor(divisorparts)
+local function getdivisor(x, primes)
+  local dvp = getdivisorparts(x, primes)
+  return getdivisorCore(dvp)
+end
+
+local function getdivisorCore(divisorparts)
   local t = {}
   local pat = 1
   local len = #divisorparts
