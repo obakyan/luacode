@@ -67,11 +67,6 @@ local function getdivisorparts(x, primes)
   return tmp
 end
 
-local function getdivisor(x, primes)
-  local dvp = getdivisorparts(x, primes)
-  return getdivisorCore(dvp)
-end
-
 local function getdivisorCore(divisorparts)
   local t = {}
   local pat = 1
@@ -96,6 +91,11 @@ local function getdivisorCore(divisorparts)
   end
   -- table.sort(t)
   return t
+end
+
+local function getdivisor(x, primes)
+  local dvp = getdivisorparts(x, primes)
+  return getdivisorCore(dvp)
 end
 
 -- idx is from 0
