@@ -2,8 +2,8 @@ package.path = package.path .. ';./../avltree.lua'
 local AvlTree = require("avltree")
 -- test
 local a = AvlTree.new(function(x, y) return x < y end, 32)
--- for i = 15, 1, -1 do a:add(i) end
-for i = 1, 15 do a:add(i) end
+-- for i = 15, 1, -1 do a:push(i) end
+for i = 1, 15 do a:push(i) end
 local function dumptest()
   print("--- dump ---")
   local tasks = {a.root}

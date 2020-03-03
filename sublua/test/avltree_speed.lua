@@ -11,10 +11,10 @@ local a = AvlTree.new(function(x, y) return x < y end, n)
 -- local a = AvlTree.new(z, n)
 local t_create = os.clock()
 print("create " .. t_create - t_start)
--- for i = 1, n do a:add(i) end
+-- for i = 1, n do a:push(i) end
 for i = 1, h do
   for j = 1, w do
-    a:add((j - 1) * h + i)
+    a:push((j - 1) * h + i)
   end
 end
 local t_add = os.clock()
