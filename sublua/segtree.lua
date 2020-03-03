@@ -1,8 +1,11 @@
-local mfl, mce, mmi = math.floor, math.ceil, math.min
+local mfl, mce = math.floor, math.ceil
+local mmi, mma = math.min, math.max
+local bls, brs = bit.lshift, bit.rshift
 local SegTree = {}
 SegTree.updateAll = function(self)
   for i = self.stagenum - 1, 1, -1 do
-    for j = 1, self.cnt[i] do
+    local cnt = bls(1, i - 1)
+    for j = 1, cnt do
       self.stage[i][j] = self.func(self.stage[i + 1][j * 2 - 1], self.stage[i + 1][j * 2])
     end
   end
@@ -10,40 +13,27 @@ end
 SegTree.create = function(self, n, func, emptyvalue)
   self.func, self.emptyvalue = func, emptyvalue
   local stagenum, mul = 1, 1
-  self.cnt, self.stage, self.size = {1}, {{}}, {}
+  self.stage = {{}}
   while mul < n do
     mul, stagenum = mul * 2, stagenum + 1
-    self.cnt[stagenum], self.stage[stagenum] = mul, {}
+    self.stage[stagenum] = {}
   end
-  for i = 1, stagenum do self.size[i] = self.cnt[stagenum + 1 - i] end
   self.stagenum = stagenum
   for i = 1, mul do self.stage[stagenum][i] = emptyvalue end
   self:updateAll()
 end
 SegTree.getRange = function(self, left, right)
   if left == right then return self.stage[self.stagenum][left] end
-  local start_stage = 1
-  while right - left + 1 < self.size[start_stage] do
-    start_stage = start_stage + 1
-  end
+  local stagenum = self.stagenum
   local ret = self.emptyvalue
-  local t1, t2, t3 = {start_stage}, {left}, {right}
-  while 0 < #t1 do
-    local stage, l, r = t1[#t1], t2[#t1], t3[#t1]
-    table.remove(t1) table.remove(t2) table.remove(t3)
-    local sz = self.size[stage]
-    if (l - 1) % sz ~= 0 then
-      local newr = mmi(r, mce((l - 1) / sz) * sz)
-      table.insert(t1, stage + 1) table.insert(t2, l) table.insert(t3, newr)
-      l = newr + 1
+  while left <= right do
+    local stage, sz = 1, bls(1, stagenum - 1)
+    local len = right - left + 1
+    while (left - 1) % sz ~= 0 or len < sz do
+      stage, sz = stage + 1, brs(sz, 1)
     end
-    if sz <= r + 1 - l then
-      ret = self.func(ret, self.stage[stage][mce(l / sz)])
-      l = l + sz
-    end
-    if l <= r then
-      table.insert(t1, stage + 1) table.insert(t2, l) table.insert(t3, r)
-    end
+    ret = self.func(ret, self.stage[stage][1 + brs(left - 1, stagenum - stage)])
+    left = left + sz
   end
   return ret
 end
@@ -51,7 +41,7 @@ SegTree.setValue = function(self, idx, value, silent)
   self.stage[self.stagenum][idx] = value
   if not silent then
     for i = self.stagenum - 1, 1, -1 do
-      local dst = mce(idx / 2)
+      local dst = brs(idx + 1, 1)
       local rem = dst * 4 - 1 - idx
       self.stage[i][dst] = self.func(self.stage[i + 1][idx], self.stage[i + 1][rem])
       idx = dst
