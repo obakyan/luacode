@@ -4,7 +4,9 @@ local mfl, mce, mmi = math.floor, math.ceil, math.min
 local AvlTree = {}
 AvlTree.makenode = function(self, val, parent)
   local i = self.box[#self.box]
-  table.remove(self.box)
+  if not i then i = #self.v + 1
+  else table.remove(self.box)
+  end
   self.v[i], self.p[i] = val, parent
   self.lc[i], self.rc[i], self.l[i], self.r[i] = 0, 0, 1, 1
   return i
