@@ -40,8 +40,8 @@ AvlTree.recalcCountAll = function(self, i)
   end
 end
 
-AvlTree.rotR = function(self, child, parent)
-  local granp = self.p[parent]
+AvlTree.rotR = function(self, parent)
+  local granp, child = self.p[parent], self.l[parent]
   self.r[child], self.l[parent] = parent, self.r[child]
   self.p[child], self.p[parent] = granp, child
   self.p[self.l[parent]] = parent
@@ -54,11 +54,10 @@ AvlTree.rotR = function(self, child, parent)
   else
     self.root = child
   end
-  self:recalcCountAll(parent)
 end
 
-AvlTree.rotL = function(self, child, parent)
-  local granp = self.p[parent]
+AvlTree.rotL = function(self, parent)
+  local granp, child = self.p[parent], self.r[parent]
   self.l[child], self.r[parent] = parent, self.l[child]
   self.p[child], self.p[parent] = granp, child
   self.p[self.r[parent]] = parent
@@ -71,7 +70,6 @@ AvlTree.rotL = function(self, child, parent)
   else
     self.root = child
   end
-  self:recalcCountAll(parent)
 end
 
 AvlTree.push = function(self, val)
@@ -107,24 +105,28 @@ AvlTree.push = function(self, val)
       pos = parent
     elseif lcp_m_rcp == 2 then
       if self.lc[child] - 1 == self.rc[child] then
-        self:rotR(child, parent)
+        self:rotR(parent)
+        self:recalcCountAll(parent)
       else
-        local cr = self.r[child]
-        self:rotL(cr, child)
-        self:rotR(cr, parent)
+        self:rotL(child)
+        self:rotR(parent)
+        self:recalcCount(child)
+        self:recalcCountAll(parent)
       end
-      pos = 1
+      break
     elseif lcp_m_rcp == -2 then
       if self.rc[child] - 1 == self.lc[child] then
-        self:rotL(child, parent)
+        self:rotL(parent)
+        self:recalcCountAll(parent)
       else
-        local cl = self.l[child]
-        self:rotR(cl, child)
-        self:rotL(cl, parent)
+        self:rotR(child)
+        self:rotL(parent)
+        self:recalcCount(child)
+        self:recalcCountAll(parent)
       end
-      pos = 1
+      break
     else
-      pos = 1
+      break
     end
   end
 end
@@ -136,19 +138,24 @@ AvlTree.rmsub = function(self, node)
       node = self.p[node]
     elseif self.lc[node] + 1 == self.rc[node] then
       self:recalcCountAll(self.p[node])
-      node = 1
+      break
     else
       if self.lc[self.r[node]] == self.rc[self.r[node]] then
-        self:rotL(self.r[node], node)
-        node = 1
+        self:rotL(node)
+        self:recalcCountAll(node)
+        break
       elseif self.lc[self.r[node]] + 1 == self.rc[self.r[node]] then
         local nr = self.r[node]
-        self:rotL(nr, node)
+        self:rotL(node)
+        self:recalcCount(node)
         node = nr
       else
-        local nrl = self.l[self.r[node]]
-        self:rotR(nrl, self.r[node])
-        self:rotL(nrl, node)
+        local nr = self.r[node]
+        local nrl = self.l[nr]
+        self:rotR(nr)
+        self:rotL(node)
+        self:recalcCount(nr)
+        self:recalcCount(node)
         node = nrl
       end
     end
