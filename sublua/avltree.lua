@@ -24,20 +24,18 @@ AvlTree.create = function(self, lessthan, n)
   end
 end
 
-AvlTree.recalcCount = function(self, i)
-  if 1 < i then
-    local kl, kr = self.l[i], self.r[i]
-    if 1 < kl then self.lc[i] = 1 + mma(self.lc[kl], self.rc[kl])
-    else self.lc[i] = 0
-    end
-    if 1 < kr then self.rc[i] = 1 + mma(self.lc[kr], self.rc[kr])
-    else self.rc[i] = 0
-    end
+AvlTree.recalc = function(self, i)
+  local kl, kr = self.l[i], self.r[i]
+  if 1 < kl then self.lc[i] = 1 + mma(self.lc[kl], self.rc[kl])
+  else self.lc[i] = 0
+  end
+  if 1 < kr then self.rc[i] = 1 + mma(self.lc[kr], self.rc[kr])
+  else self.rc[i] = 0
   end
 end
-AvlTree.recalcCountAll = function(self, i)
+AvlTree.recalcAll = function(self, i)
   while 1 < i do
-    self:recalcCount(i)
+    self:recalc(i)
     i = self.p[i]
   end
 end
@@ -131,28 +129,28 @@ AvlTree.push = function(self, val)
     if parent <= 1 then
       break
     end
-    self:recalcCount(parent)
+    self:recalc(parent)
     local lcp_m_rcp = self.lc[parent] - self.rc[parent]
     if lcp_m_rcp % 2 ~= 0 then -- 1 or -1
       pos = parent
     elseif lcp_m_rcp == 2 then
       if self.lc[child] - 1 == self.rc[child] then
         self:rotR(parent)
-        self:recalcCountAll(parent)
+        self:recalcAll(parent)
       else
         self:rotLR(child, parent)
-        self:recalcCount(child)
-        self:recalcCountAll(parent)
+        self:recalc(child)
+        self:recalcAll(parent)
       end
       break
     elseif lcp_m_rcp == -2 then
       if self.rc[child] - 1 == self.lc[child] then
         self:rotL(parent)
-        self:recalcCountAll(parent)
+        self:recalcAll(parent)
       else
         self:rotRL(child, parent)
-        self:recalcCount(child)
-        self:recalcCountAll(parent)
+        self:recalc(child)
+        self:recalcAll(parent)
       end
       break
     else
@@ -163,28 +161,28 @@ end
 
 AvlTree.rmsub = function(self, node)
   while 1 < node do
-    self:recalcCount(node)
+    self:recalc(node)
     if self.lc[node] == self.rc[node] then
       node = self.p[node]
     elseif self.lc[node] + 1 == self.rc[node] then
-      self:recalcCountAll(self.p[node])
+      self:recalcAll(self.p[node])
       break
     else
       if self.lc[self.r[node]] == self.rc[self.r[node]] then
         self:rotL(node)
-        self:recalcCountAll(node)
+        self:recalcAll(node)
         break
       elseif self.lc[self.r[node]] + 1 == self.rc[self.r[node]] then
         local nr = self.r[node]
         self:rotL(node)
-        self:recalcCount(node)
+        self:recalc(node)
         node = nr
       else
         local nr = self.r[node]
         local nrl = self.l[nr]
         self:rotRL(nr, node)
-        self:recalcCount(nr)
-        self:recalcCount(node)
+        self:recalc(nr)
+        self:recalc(node)
         node = nrl
       end
     end
