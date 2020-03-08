@@ -2,8 +2,9 @@ local mfl, mce, mmi = math.floor, math.ceil, math.min
 local mma = math.max
 local LazySegTree = {}
 
-LazySegTree.create = function(self, n, emptyvalue)
+LazySegTree.create = function(self, n, func, emptyvalue)
   self.emptyvalue = emptyvalue
+  self.func = func
   local stagenum, mul = 1, 1
   self.cnt, self.size = {1}, {}
   self.lazy = {{emptyvalue}}
@@ -21,8 +22,8 @@ LazySegTree.resolveAll = function(self)
     for pos = 1, self.cnt[stage] do
       local v = self.lazy[stage][pos]
       if v ~= self.emptyvalue then
-        self.lazy[stage + 1][pos * 2 - 1] = self.lazy[stage + 1][pos * 2 - 1] + v
-        self.lazy[stage + 1][pos * 2] = self.lazy[stage + 1][pos * 2] + v
+        self.lazy[stage + 1][pos * 2 - 1] = self.func(self.lazy[stage + 1][pos * 2 - 1], v)
+        self.lazy[stage + 1][pos * 2] = self.func(self.lazy[stage + 1][pos * 2], v)
         self.lazy[stage][pos] = self.emptyvalue
       end
     end
@@ -34,15 +35,18 @@ LazySegTree.getValue = function(self, idx)
     local pos = mce(idx / (self.size[stage]))
     local v = self.lazy[stage][pos]
     if v ~= self.emptyvalue then
-      self.lazy[stage + 1][pos * 2 - 1] = self.lazy[stage + 1][pos * 2 - 1] + v
-      self.lazy[stage + 1][pos * 2] = self.lazy[stage + 1][pos * 2] + v
+      self.lazy[stage + 1][pos * 2 - 1] = self.func(self.lazy[stage + 1][pos * 2 - 1], v)
+      self.lazy[stage + 1][pos * 2] = self.func(self.lazy[stage + 1][pos * 2], v)
       self.lazy[stage][pos] = self.emptyvalue
     end
   end
   return self.lazy[self.stagenum][idx]
 end
-LazySegTree.addRange = function(self, left, right, value)
-  if left == right then self.lazy[self.stagenum][left] = self.lazy[self.stagenum][left] + value return end
+LazySegTree.setRange = function(self, left, right, value)
+  if left == right then
+    self.lazy[self.stagenum][left] = self.func(self.lazy[self.stagenum][left], value)
+    return
+  end
   local start_stage = 1
   while right - left + 1 < self.size[start_stage] do
     start_stage = start_stage + 1
@@ -58,7 +62,7 @@ LazySegTree.addRange = function(self, left, right, value)
       l = newr + 1
     end
     if sz <= r + 1 - l then
-      self.lazy[stage][mce(l / sz)] = self.lazy[stage][mce(l / sz)] + value
+      self.lazy[stage][mce(l / sz)] = self.func(self.lazy[stage][mce(l / sz)], value)
       l = l + sz
     end
     if l <= r then
@@ -66,10 +70,10 @@ LazySegTree.addRange = function(self, left, right, value)
     end
   end
 end
-LazySegTree.new = function(n, emptyvalue)
+LazySegTree.new = function(n, func, emptyvalue)
   local obj = {}
   setmetatable(obj, {__index = LazySegTree})
-  obj:create(n, emptyvalue)
+  obj:create(n, func, emptyvalue)
   return obj
 end
 
