@@ -4,9 +4,10 @@
 -- if not exist then return n + 1
 SegTree.lower_bound = function(self, val)
   local ret, retpos = self.emptyvalue, 0
-  local stage, l, r = 1, 1, self.size[1]
+  local stagenum = self.stagenum
+  local stage, l, r = 1, 1, bls(1, stagenum - 1)
   while true do
-    local sz = self.size[stage]
+    local sz = bls(1, stagenum - stage)
     local tmp = self.func(ret, self.stage[stage][mce(l / sz)])
     if tmp < val then
       ret, retpos = tmp, l + sz - 1
@@ -30,11 +31,12 @@ end
 SegTree.right_bound = function(self, val, left, right)
   local ret, retpos = self.emptyvalue, left - 1
   local stage, l, r = 1, left, right
+  local stagenum = self.stagenum
   while true do
-    local sz = self.size[stage]
+    local sz = bls(1, stagenum - stage)
     while (l - 1) % sz ~= 0 or r + 1 - l < sz do
       stage = stage + 1
-      sz = self.size[stage]
+      sz = bls(1, stagenum - stage)
     end
     local tmp = self.func(ret, self.stage[stage][mce(l / sz)])
     if tmp < val then
@@ -57,11 +59,12 @@ end
 SegTree.left_bound = function(self, val, left, right)
   local ret, retpos = self.emptyvalue, right + 1
   local stage, l, r = 1, left, right
+  local stagenum = self.stagenum
   while true do
-    local sz = self.size[stage]
+    local sz = bls(1, stagenum - stage)
     while r % sz ~= 0 or r + 1 - l < sz do
       stage = stage + 1
-      sz = self.size[stage]
+      sz = bls(1, stagenum - stage)
     end
     local tmp = self.func(ret, self.stage[stage][mfl(r / sz)])
     if tmp < val then
