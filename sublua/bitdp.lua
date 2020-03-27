@@ -1,12 +1,14 @@
+local bls, brs = bit.lshift, bit.rshift
+
 local function bdp_prepare(n, cost)
-  local tot = 1
+  local tot = bls(1, n)
   local alltask = {}
   local stagetask = {}
   for i = 1, n do
-    tot = tot * 2
     stagetask[i] = {}
   end
   for i = 1, tot - 1 do
+    -- set empty state
     alltask[i] = 150000
   end
   for i = 1, tot - 1 do
@@ -39,7 +41,7 @@ local function bdp_doall(n, alltask, stagetask, cost)
       local tmp = used
       for j = 1, n do
         if tmp % 2 == 0 then
-          -- alltask[used + mul] = mmi(alltask[used + mul], alltask[used] + mma(0, cost[j] - tbl[used] % 1000))
+          -- alltask[used + mul] = alltask[used] + func(to j)
         else
           tmp = tmp - 1
         end
@@ -50,10 +52,6 @@ local function bdp_doall(n, alltask, stagetask, cost)
   end
 end
 
-local function bdp_getresult(n, tot, alltask)
-  local ret = 0
-  for i = 1, n do
-    -- ret = mma(ret, alltask[tot - 1])
-  end
-  return ret
+local function bdp_getresult(tot, alltask)
+  return alltask[tot - 1]
 end
