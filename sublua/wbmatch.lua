@@ -52,7 +52,7 @@ WhiteBlack.run = function(self, spos)
     else
       if self.invedge[src] then
         for dst, c in pairs(self.invedge[src]) do
-          if c == 1 and (not len[dst] or len[src] + 1 < len[dst])  then
+          if c == 1 and (not len[dst] or len[src] + 1 < len[dst]) then
             len[dst] = len[src] + 1
             if not tasked[dst] then
               table.insert(tasks, dst)
