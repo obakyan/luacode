@@ -44,15 +44,15 @@ local function getdivisorparts(x, primes)
   local dv = primes[primepos]
   while primepos <= prime_num and dv <= lim do
     if x % dv == 0 then
-      local asdf = {}
-      asdf.p = dv
-      asdf.cnt = 1
+      local t = {}
+      t.p = dv
+      t.cnt = 1
       x = x / dv
       while x % dv == 0 do
         x = x / dv
-        asdf.cnt = asdf.cnt + 1
+        t.cnt = t.cnt + 1
       end
-      table.insert(tmp, asdf)
+      table.insert(tmp, t)
       lim = mce(msq(x))
     end
     if primepos == prime_num then break end
@@ -60,9 +60,9 @@ local function getdivisorparts(x, primes)
     dv = primes[primepos]
   end
   if x ~= 1 then
-    local asdf = {}
-    asdf.p, asdf.cnt = x, 1
-    table.insert(tmp, asdf)
+    local t = {}
+    t.p, t.cnt = x, 1
+    table.insert(tmp, t)
   end
   return tmp
 end
