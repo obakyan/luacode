@@ -54,6 +54,14 @@ local function getComb(n, k)
   return bmul(ret, modinv(inv))
 end
 
+local function getInvs(n)
+  local invs = {1}
+  for i = 2, n do
+    invs[i] = bmul(mfl(mod / i), mod - invs[mod % i])
+  end
+  return invs
+end
+
 local function goldpow(z, r, pow)
   local resz, resr = 1, 0
   while 0 < pow do
