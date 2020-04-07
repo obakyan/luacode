@@ -4,8 +4,8 @@ local mfl = math.floor
 -- 10^9 + 7 only
 -- (31623^2) % 1000000007 = 14122
 local function bmul(x, y)
-  local x0, y0 = x % 31623, y % 31623
   local x1, y1 = mfl(x / 31623), mfl(y / 31623)
+  local x0, y0 = x - x1 * 31623, y - y1 * 31623
   return (x1 * y1 * 14122 + (x1 * y0 + x0 * y1) * 31623 + x0 * y0) % mod
 end
 
