@@ -56,10 +56,12 @@ end
 
 local function getInvs(n)
   local invs = {1}
+  local invfact = {1}
   for i = 2, n do
     invs[i] = bmul(mfl(mod / i), mod - invs[mod % i])
+    invfact[i] = bmul(invfact[i - 1], invs[i])
   end
-  return invs
+  return invs, invfact
 end
 
 local function goldpow(z, r, pow)
