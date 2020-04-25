@@ -30,22 +30,21 @@ end
 -- if not exist then return right + 1
 SegTree.right_bound = function(self, val, left, right)
   local ret, retpos = self.emptyvalue, left - 1
-  local stage, l, r = 1, left, right
+  local l, r = left, right
+  local stage = mma(self.left_stage[left], self.sz_stage[right - left + 1])
   local stagenum = self.stagenum
   while true do
     local sz = bls(1, stagenum - stage)
-    while (l - 1) % sz ~= 0 or r + 1 - l < sz do
-      stage = stage + 1
-      sz = bls(1, stagenum - stage)
-    end
     local tmp = self.func(ret, self.stage[stage][mce(l / sz)])
     if tmp < val then
       ret, retpos = tmp, l + sz - 1
       if retpos == right then break end
-      if l + sz <= r then stage, l, r = 1, l + sz, r
+      if l + sz <= r then
+        l = l + sz
+        stage = mma(self.left_stage[l], self.sz_stage[r - l + 1])
       else break end
     else
-      if sz ~= 1 then stage, l, r = stage + 1, l, l + sz - 2
+      if sz ~= 1 then stage, r = stage + 1, l + sz - 2
       else break end
     end
   end

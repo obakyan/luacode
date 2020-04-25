@@ -19,6 +19,20 @@ SegTree.create = function(self, n, func, emptyvalue)
     self.stage[stagenum] = {}
   end
   self.stagenum = stagenum
+  self.left_stage = {}
+  for i = 1, n do
+    local sp, sz = 1, bls(1, stagenum - 1)
+    while(i - 1) % sz ~= 0 do
+      sp, sz = sp + 1, brs(sz, 1)
+    end
+    self.left_stage[i] = sp
+  end
+  self.sz_stage = {}
+  local tmp, sp = 1, stagenum
+  for i = 1, n do
+    if tmp * 2 == i then tmp, sp = tmp * 2, sp - 1 end
+    self.sz_stage[i] = sp
+  end
   for i = 1, mul do self.stage[stagenum][i] = emptyvalue end
   self:updateAll()
 end
@@ -27,11 +41,8 @@ SegTree.getRange = function(self, left, right)
   local stagenum = self.stagenum
   local ret = self.emptyvalue
   while left <= right do
-    local stage, sz = 1, bls(1, stagenum - 1)
-    local len = right - left + 1
-    while (left - 1) % sz ~= 0 or len < sz do
-      stage, sz = stage + 1, brs(sz, 1)
-    end
+    local stage = mma(self.left_stage[left], self.sz_stage[right - left + 1])
+    local sz = bls(1, stagenum - stage)
     ret = self.func(ret, self.stage[stage][1 + brs(left - 1, stagenum - stage)])
     left = left + sz
   end
