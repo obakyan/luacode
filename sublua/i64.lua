@@ -1,20 +1,28 @@
 local mfl = math.floor
 
+
 local function llprint(llnumber)
   --usage: llprint(2 * 1234567890123456LL)
   local str = tostring(llnumber):gsub("LL", "")
   print(str)
 end
 
+local ffi = require("ffi")
+local C = ffi.C
+ffi.cdef[[
+long long atoll(const char*);
+]]
+
 local function lltonumber(str)
-  local ret = 0LL
-  local sign = str:sub(1, 1) ~= "-"
-  local begin = sign and 1 or 2
-  for i = begin, #str do
-    ret = ret * 10LL + str:sub(i, i):byte() - 48
-  end
-  if not sign then ret = ret * -1LL end
-  return ret
+  do return C.atoll(str) end
+  -- local ret = 0LL
+  -- local sign = str:sub(1, 1) ~= "-"
+  -- local begin = sign and 1 or 2
+  -- for i = begin, #str do
+  --   ret = ret * 10LL + str:sub(i, i):byte() - 48
+  -- end
+  -- if not sign then ret = ret * -1LL end
+  -- return ret
 end
 
 local i64 = {v = {0, 0}, c = 10000000000}
