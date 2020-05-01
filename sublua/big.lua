@@ -1,22 +1,10 @@
 local mod = 1000000007
 local mfl = math.floor
 
--- 10^9 + 7 only
--- (31623^2) % 1000000007 = 14122
 local function bmul(x, y)
   local x1, y1 = mfl(x / 31623), mfl(y / 31623)
   local x0, y0 = x - x1 * 31623, y - y1 * 31623
   return (x1 * y1 * 14122 + (x1 * y0 + x0 * y1) * 31623 + x0 * y0) % mod
-end
-
--- for 998244353
--- (31596^2) % 998244353 = 62863
-local mod = 998244353
-local mfl = math.floor
-local function bmul(x, y)
-  local x0, y0 = x % 31596, y % 31596
-  local x1, y1 = mfl(x / 31596), mfl(y / 31596)
-  return (x1 * y1 * 62863 + (x1 * y0 + x0 * y1) * 31596 + x0 * y0) % mod
 end
 
 local function badd(x, y)
@@ -77,6 +65,18 @@ local function goldpow(z, r, pow)
   return resz;
 end
 
+-- for 10^9 + 7
+-- (31623^2) % 1000000007 = 14122
+
+-- for 998244353
+-- (31596^2) % 998244353 = 62863
+local mod = 998244353
+local mfl = math.floor
+local function bmul(x, y)
+  local x0, y0 = x % 31596, y % 31596
+  local x1, y1 = mfl(x / 31596), mfl(y / 31596)
+  return (x1 * y1 * 62863 + (x1 * y0 + x0 * y1) * 31596 + x0 * y0) % mod
+end
 
 -- OBSOLETE
 local function bmulslow(x, y)
