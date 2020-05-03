@@ -14,7 +14,7 @@ long long atoll(const char*);
 ]]
 
 local function lltonumber(str)
-  do return C.atoll(str) end
+  return C.atoll(str)
   -- local ret = 0LL
   -- local sign = str:sub(1, 1) ~= "-"
   -- local begin = sign and 1 or 2
