@@ -5,11 +5,14 @@ WhiteBlack.create = function(self)
   self.invedge = {}
   self.leftnode = {}
   self.rightmatched = {}
+  self.route = {}
+  self.routelen = 0
+  self.asked = {}
 end
 
 WhiteBlack.addNode = function(self, node, isLeft)
   if isLeft then
-    self.leftnode[node] = true
+    table.insert(self.leftnode, node)
     self.edge[node] = {}
   else
     self.invedge[node] = {}
@@ -17,9 +20,41 @@ WhiteBlack.addNode = function(self, node, isLeft)
 end
 
 WhiteBlack.addEdge = function(self, src, dst)
-  assert(self.leftnode[src])
+  assert(self.edge[src])
   self.edge[src][dst] = 1
   self.invedge[dst][src] = 0
+end
+
+WhiteBlack.dfs = function(self)
+  local src = self.route[self.routelen]
+  if self.routelen % 2 == 1 then
+    for dst, c in pairs(self.edge[src]) do
+      if c == 1 and not self.asked[dst] then
+        self.asked[dst] = true
+        self.routelen = self.routelen + 1
+        self.route[self.routelen] = dst
+        local ret = self:dfs()
+        if ret then return true end
+        self.routelen = self.routelen - 1
+      end
+    end
+  else
+    if not self.rightmatched[src] then
+      self.rightmatched[src] = true
+      return true
+    end
+    for dst, c in pairs(self.invedge[src]) do
+      if c == 1 and not self.asked[dst] then
+        self.asked[dst] = true
+        self.routelen = self.routelen + 1
+        self.route[self.routelen] = dst
+        local ret = self:dfs()
+        if ret then return true end
+        self.routelen = self.routelen - 1
+      end
+    end
+  end
+  return false
 end
 
 WhiteBlack.run = function(self, spos)
@@ -27,64 +62,22 @@ WhiteBlack.run = function(self, spos)
   local tasked = {}
   local dstpos = 0
   tasked[spos] = true
-  local len = {}
-  len[spos] = 0
-  local found = false
-  while 0 < #tasks do
-    local src = tasks[#tasks]
-    table.remove(tasks)
-    tasked[src] = false
-    if self.leftnode[src] then
-      for dst, c in pairs(self.edge[src]) do
-        if c == 1 and (not len[dst] or len[src] + 1 < len[dst]) then
-          len[dst] = len[src] + 1
-          if not self.rightmatched[dst] then
-            self.rightmatched[dst] = true
-            found = true
-            dstpos = dst
-            break
-          elseif not tasked[dst] then
-            table.insert(tasks, dst)
-            tasked[dst] = true
-          end
-        end
-      end
-    else
-      if self.invedge[src] then
-        for dst, c in pairs(self.invedge[src]) do
-          if c == 1 and (not len[dst] or len[src] + 1 < len[dst]) then
-            len[dst] = len[src] + 1
-            if not tasked[dst] then
-              table.insert(tasks, dst)
-              tasked[dst] = true
-            end
-          end
-        end
-      end
-    end
-    if found then break end
+  for k, _u in pairs(self.asked) do
+    self.asked[k] = false
   end
+  self.asked[spos] = true
+  self.routelen = 1
+  self.route[1] = spos
+  local found = self:dfs()
   if found then
-    local l = len[dstpos]
-    for i = l, 1, -1 do
+    for i = 1, self.routelen - 1 do
+      local src, dst = self.route[i], self.route[i + 1]
       if i % 2 == 1 then
-        for src, _u in pairs(self.invedge[dstpos]) do
-          if self.edge[src][dstpos] == 1 and len[src] == i - 1 then
-            self.edge[src][dstpos] = 0
-            self.invedge[dstpos][src] = 1
-            dstpos = src
-            break
-          end
-        end
+        self.edge[src][dst] = 0
+        self.invedge[dst][src] = 1
       else
-        for src, _u in pairs(self.edge[dstpos]) do
-          if self.invedge[src][dstpos] == 1 and len[src] == i - 1 then
-            self.invedge[src][dstpos] = 0
-            self.edge[dstpos][src] = 1
-            dstpos = src
-            break
-          end
-        end
+        self.edge[dst][src] = 1
+        self.invedge[src][dst] = 0
       end
     end
     return true
@@ -93,8 +86,9 @@ end
 
 WhiteBlack.getMatchCount = function(self)
   local cnt = 0
-  for src, _u in pairs(self.leftnode) do
-    local res = self:run(src)
+  local lnodenum = #self.leftnode
+  for i = 1, lnodenum do
+    local res = self:run(self.leftnode[i])
     if res then cnt = cnt + 1 end
   end
   return cnt
