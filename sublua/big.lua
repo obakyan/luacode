@@ -43,13 +43,20 @@ local function getComb(n, k)
 end
 
 local function getInvs(n)
+  local fact = {1}
   local invs = {1}
   local invfact = {1}
   for i = 2, n do
+    fact[i] = bmul(fact[i - 1], i)
     invs[i] = bmul(mfl(mod / i), mod - invs[mod % i])
     invfact[i] = bmul(invfact[i - 1], invs[i])
   end
   return invs, invfact
+end
+
+local function getComb(n, k)
+  if k == 0 or k == n then return 1 end
+  return bmul(fact[n], bmul(invfact[k], invfact[n - k]))
 end
 
 local function goldpow(z, r, pow)
