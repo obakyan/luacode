@@ -75,6 +75,8 @@ LazyRangeSeg.getRange = function(self, left, right)
   return ret
 end
 LazyRangeSeg.setRange = function(self, left, right, value)
+  if 1 < left then self:resolve(left - 1) end
+  self:resolve(right)
   local stagenum = self.stagenum
   while left <= right do
     local stage, sz = 1, bls(1, stagenum - 1)
