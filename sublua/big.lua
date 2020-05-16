@@ -59,6 +59,20 @@ local function getComb(n, k)
   return bmul(fact[n], bmul(invfact[k], invfact[n - k]))
 end
 
+local function stirling(n, k)
+  local ret = 0
+  for i = 0, k do
+    local v = bmul(modpow(i, n), getComb(k, i))
+    if (k - i) % 2 == 0 then
+      ret = badd(ret, v)
+    else
+      ret = bsub(ret, v)
+    end
+  end
+  return bmul(invfact[k], ret)
+  -- return ret
+end
+
 local function goldpow(z, r, pow)
   local resz, resr = 1, 0
   while 0 < pow do
