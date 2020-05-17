@@ -1,5 +1,6 @@
 atcoder.lua
 yukicoder.lua 
+maketest.lua
 *.txt
 *.json
 store
