@@ -1,4 +1,5 @@
 local mmi, mma = math.min, math.max
+local mfl, mce = math.floor, math.ceil
 local TranSufA = {}
 TranSufA.makeSufA = function(self)
   self.sufa = {}
@@ -115,6 +116,25 @@ TranSufA.makeLCPA = function(self)
       spos = mma(0, len - 1)
     end
   end
+end
+
+TranSufA.lowerBound = function(self, s)
+  if s <= self.str:sub(self.sufa[1], #self.str) then
+    return 1
+  end
+  if self.str:sub(self.sufa[#self.str], #self.str) < s then
+    return #self.str + 1
+  end
+  local min, max = 1, #self.str
+  while 1 < max - min do
+    local mid = mfl((min + max) / 2)
+    if s <= self.str:sub(self.sufa[mid], #self.str) then
+      max = mid
+    else
+      min = mid
+    end
+  end
+  return max
 end
 
 TranSufA.create = function(self, str)
