@@ -47,9 +47,9 @@ local function getdivisorparts(x, primes)
       local t = {}
       t.p = dv
       t.cnt = 1
-      x = x / dv
+      x = mfl(x / dv)
       while x % dv == 0 do
-        x = x / dv
+        x = mfl(x / dv)
         t.cnt = t.cnt + 1
       end
       table.insert(tmp, t)
