@@ -20,4 +20,4 @@ jobs:
       run: |
         cd sublua/test
         luajit avltree_arc074d.lua < data/arc074d_2_15_in.t > out.t
-        cmp out.txt data/arc074d_2_15_out.t
+        cmp out.t data/arc074d_2_15_out.t
