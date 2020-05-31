@@ -4,9 +4,10 @@ local AvlTree = require("avltree")
 local mma = math.max
 local mfl, mce, mmi = math.floor, math.ceil, math.min
 
-local n = io.read("*n", "*l")
+local filein = io.open("data/arc074d_2_15_in.t")
+local n = filein:read("*n", "*l")
 local a = {}
-local s = io.read()
+local s = filein:read()
 for str in s:gmatch("%d+") do
   table.insert(a, tonumber(str))
 end
@@ -34,4 +35,8 @@ local ret = leftsum[1] - rightsum[n + 1]
 for i = 2, n + 1 do
   ret = mma(ret, leftsum[i] - rightsum[n + 2 - i])
 end
-print(ret)
+
+filein:close()
+local fileout = io.open("data/arc074d_2_15_out.t")
+local expected = fileout:read("*n") + 1
+assert(ret == expected)
