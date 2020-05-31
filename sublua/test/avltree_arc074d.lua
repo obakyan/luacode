@@ -38,5 +38,5 @@ end
 
 filein:close()
 local fileout = io.open("data/arc074d_2_15_out.t")
-local expected = fileout:read("*n") + 1
+local expected = fileout:read("*n")
 assert(ret == expected)
