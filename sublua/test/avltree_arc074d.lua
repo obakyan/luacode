@@ -4,7 +4,7 @@ local AvlTree = require("avltree")
 local mma = math.max
 local mfl, mce, mmi = math.floor, math.ceil, math.min
 
-local filein = io.open("data/arc074d_2_15_in.t")
+local filein = io.open("data/arc074d_2_15_in")
 local n = filein:read("*n", "*l")
 local a = {}
 local s = filein:read()
@@ -37,6 +37,6 @@ for i = 2, n + 1 do
 end
 
 filein:close()
-local fileout = io.open("data/arc074d_2_15_out.t")
+local fileout = io.open("data/arc074d_2_15_out")
 local expected = fileout:read("*n")
 assert(ret == expected)
