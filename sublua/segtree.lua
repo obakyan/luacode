@@ -48,15 +48,18 @@ SegTree.getRange = function(self, left, right)
   end
   return ret
 end
+SegTree.update = function(self, idx)
+  for i = self.stagenum - 1, 1, -1 do
+    local dst = brs(idx + 1, 1)
+    local rem = dst * 4 - 1 - idx
+    self.stage[i][dst] = self.func(self.stage[i + 1][idx], self.stage[i + 1][rem])
+    idx = dst
+  end
+end
 SegTree.setValue = function(self, idx, value, silent)
   self.stage[self.stagenum][idx] = value
   if not silent then
-    for i = self.stagenum - 1, 1, -1 do
-      local dst = brs(idx + 1, 1)
-      local rem = dst * 4 - 1 - idx
-      self.stage[i][dst] = self.func(self.stage[i + 1][idx], self.stage[i + 1][rem])
-      idx = dst
-    end
+    self:update(idx)
   end
 end
 SegTree.new = function(n, func, emptyvalue)
