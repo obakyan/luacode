@@ -20,3 +20,10 @@ jobs:
       run: |
         cd sublua/test
         luajit avltree_arc074d.lua
+        cd ../../
+
+    - name: SegTree test
+      run: |
+        cd sublua/test
+        luajit segtree_basic.lua
+        cd ../../
