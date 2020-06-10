@@ -51,22 +51,7 @@ MPM.updateLength = function(self)
       end
     end
   end
-  taskcnt, done = 1, 0
-  tasks[1] = self.tpos
-  while done < taskcnt do
-    done = done + 1
-    local src = tasks[done]
-    for i = 1, #edge_dst[src] do
-      if 0 < edge_cap[src][i] then
-        local dst = edge_dst[i]
-        if self.tlen[dst] == inf then
-          self.tlen[dst] = self.tlen[src] + 1
-          taskcnt = taskcnt + 1
-          tasks[taskcnt] = dst
-        end
-      end
-    end
-  end
+  -- restore route
 end
 MPM.getMinLenNodes = function(self)
 end
