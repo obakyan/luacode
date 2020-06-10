@@ -29,14 +29,43 @@ MPM.updateLength = function(self)
   local inf = self.n + 1
   for i = 1, self.n do
     self.slen[i] = inf
+    self.tlen[i] = inf
   end
   self.slen[self.spos] = 0
-  local taskcnt, done = 1, 0
+  local edge_dst = self.edge_dst
+  local edge_cap = self.edge_cap
   local tasks = self.tasks
+  local taskcnt, done = 1, 0
   tasks[1] = self.spos
   while done < taskcnt do
     done = done + 1
     local src = tasks[done]
+    for i = 1, #edge_dst[src] do
+      if 0 < edge_cap[src][i] then
+        local dst = edge_dst[i]
+        if self.slen[dst] == inf then
+          self.slen[dst] = self.slen[src] + 1
+          taskcnt = taskcnt + 1
+          tasks[taskcnt] = dst
+        end
+      end
+    end
+  end
+  taskcnt, done = 1, 0
+  tasks[1] = self.tpos
+  while done < taskcnt do
+    done = done + 1
+    local src = tasks[done]
+    for i = 1, #edge_dst[src] do
+      if 0 < edge_cap[src][i] then
+        local dst = edge_dst[i]
+        if self.tlen[dst] == inf then
+          self.tlen[dst] = self.tlen[src] + 1
+          taskcnt = taskcnt + 1
+          tasks[taskcnt] = dst
+        end
+      end
+    end
   end
 end
 MPM.getMinLenNodes = function(self)
