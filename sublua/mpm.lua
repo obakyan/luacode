@@ -5,16 +5,18 @@ MPM.initialize = function(self, n, spos, tpos)
   self.spos, self.tpos = spos, tpos
   self.edge_dst = {}
   self.edge_cap = {}
-  self.edge_dst_invpos = {}
-  self.slen = {}
-  self.tlen = {}
+  self.edge_dst_invidx = {}
+  self.len = {}
+  self.sub_graph_flag = {}
   for i = 1, n do
     self.edge_dst[i] = {}
     self.edge_cap[i] = {}
     self.edge_dst_invidx[i] = {}
-    self.slen[i], self.tlen[i] = 0, 0
+    self.len[i] = 0
+    self.sub_graph_flag[i] = false
   end
-  self.tasks = {}
+  self.sub_graph_v = {}
+  self.sub_graph_size = 0
 end
 
 MPM.addEdge = function(self, src, dst, cap)
@@ -25,33 +27,76 @@ MPM.addEdge = function(self, src, dst, cap)
   table.insert(self.edge_cap[dst], 0)
   table.insert(self.edge_dst_invidx[dst], #self.edge_dst[src])
 end
-MPM.updateLength = function(self)
+MPM.makeSubGraph = function(self)
   local inf = self.n + 1
+  local len, sub_graph_flag = self.len, self.sub_graph_flag
+  local edge_dst, edge_cap = self.edge_dst, self.edge_cap
+  local sub_graph_v = self.sub_graph_v
   for i = 1, self.n do
-    self.slen[i] = inf
-    self.tlen[i] = inf
+    len[i] = inf
+    sub_graph_flag[i] = false
   end
-  self.slen[self.spos] = 0
-  local edge_dst = self.edge_dst
-  local edge_cap = self.edge_cap
-  local tasks = self.tasks
+  -- BFS
+  len[self.spos] = 0
   local taskcnt, done = 1, 0
-  tasks[1] = self.spos
+  sub_graph_v[1] = self.spos
+  local reached = false
   while done < taskcnt do
     done = done + 1
-    local src = tasks[done]
+    local src = sub_graph_v[done]
     for i = 1, #edge_dst[src] do
       if 0 < edge_cap[src][i] then
-        local dst = edge_dst[i]
-        if self.slen[dst] == inf then
-          self.slen[dst] = self.slen[src] + 1
+        local dst = edge_dst[src][i]
+        if len[dst] == inf then
+          len[dst] = len[src] + 1
           taskcnt = taskcnt + 1
-          tasks[taskcnt] = dst
+          sub_graph_v[taskcnt] = dst
+          if dst == self.tpos then reached = true break end
         end
       end
     end
+    if reached then break end
+  end
+  if not reached then
+    self.sub_graph_size = 0
+    return false
   end
   -- restore route
+  sub_graph_flag[self.tpos] = true
+  local curlen = len[self.tpos]
+  while curlen == len[sub_graph_v[taskcnt]] do
+    taskcnt = taskcnt - 1
+  end
+  for isrc = taskcnt, 1, -1 do
+    local src = sub_graph_v[isrc]
+    for i = 1, #edge_dst[src] do
+      local dst = edge_dst[src][i]
+      if 0 < edge_cap[src][i] and sub_graph_flag[dst]
+      and len[dst] == len[src] + 1 then
+        sub_graph_flag[src] = true break
+      end
+    end
+  end
+  -- remove unused vertex
+  local nodecnt = 1
+  for i = 1, taskcnt do
+    local v = sub_graph_v[i]
+    if sub_graph_flag[v] then
+      sub_graph_v[nodecnt] = v
+      nodecnt = nodecnt + 1
+    end
+  end
+  sub_graph_v[nodecnt] = self.tpos
+  self.sub_graph_size = nodecnt
 end
-MPM.getMinLenNodes = function(self)
-end
+
+MPM:initialize(7, 1, 7)
+MPM:addEdge(1, 2, 1)
+MPM:addEdge(1, 3, 1)
+MPM:addEdge(2, 4, 1)
+MPM:addEdge(3, 5, 1)
+MPM:addEdge(3, 6, 1)
+MPM:addEdge(4, 5, 1)
+MPM:addEdge(5, 7, 1)
+MPM:addEdge(6, 7, 1)
+print(MPM:makeSubGraph())
