@@ -17,6 +17,8 @@ MPM.initialize = function(self, n, spos, tpos)
   end
   self.sub_graph_v = {}
   self.sub_graph_size = 0
+  self.send = {}
+  self.receive = {}
 end
 
 MPM.addEdge = function(self, src, dst, cap)
@@ -88,15 +90,31 @@ MPM.makeSubGraph = function(self)
   end
   sub_graph_v[nodecnt] = self.tpos
   self.sub_graph_size = nodecnt
+  return true
+end
+
+MPM.flow = function(self)
+  local sub_graph_flag = self.sub_graph_flag
+  local edge_dst, edge_cap = self.edge_dst, self.edge_cap
+  local sub_graph_v = self.sub_graph_v
+  local gsize = self.sub_graph_size
+  for i = 1, gsize do
+    self.send[i] = 0
+    self.receive[i] = 0
+  end
+  -- update send-receive amount
+  for i = 1, gsize do
+    local v = sub_graph_v[i]
+  end
 end
 
 MPM:initialize(7, 1, 7)
 MPM:addEdge(1, 2, 1)
-MPM:addEdge(1, 3, 1)
+MPM:addEdge(1, 3, 2)
 MPM:addEdge(2, 4, 1)
-MPM:addEdge(3, 5, 1)
-MPM:addEdge(3, 6, 1)
+MPM:addEdge(3, 5, 3)
+MPM:addEdge(3, 6, 3)
 MPM:addEdge(4, 5, 1)
 MPM:addEdge(5, 7, 1)
-MPM:addEdge(6, 7, 1)
+MPM:addEdge(6, 7, 2)
 print(MPM:makeSubGraph())
