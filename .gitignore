@@ -1,7 +1,12 @@
 atcoder.lua
-yukicoder.lua 
+yukicoder.lua
 maketest.lua
+hackerrank.lua
 *.txt
 *.json
 store
 .DS_Store
+*.exe
+*.cpp
+subcpp
+py
