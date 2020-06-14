@@ -63,12 +63,13 @@ MPM.initialize = function(self, n, spos, tpos)
   end
 end
 
-MPM.addEdge = function(self, src, dst, cap)
+MPM.addEdge = function(self, src, dst, cap, invcap)
+  if not invcap then invcap = 0 end
   table.insert(self.edge_dst[src], dst)
   table.insert(self.edge_cap[src], cap)
   table.insert(self.edge_dst_invedge_idx[src], 1 + #self.edge_dst[dst])
   table.insert(self.edge_dst[dst], src)
-  table.insert(self.edge_cap[dst], 0)
+  table.insert(self.edge_cap[dst], invcap)
   table.insert(self.edge_dst_invedge_idx[dst], #self.edge_dst[src])
 end
 MPM.makeSubGraph = function(self)
