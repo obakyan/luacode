@@ -160,8 +160,10 @@ MPM.makeSubGraph = function(self)
       nodecnt = nodecnt + 1
     end
   end
-  sub_graph_v[nodecnt] = self.tpos
-  do
+  if sub_graph_v[nodecnt - 1] == self.tpos then
+    nodecnt = nodecnt - 1
+  else
+    sub_graph_v[nodecnt] = self.tpos
     local lv = level[self.tpos]
     level_vertex_count[lv] = level_vertex_count[lv] + 1
   end
