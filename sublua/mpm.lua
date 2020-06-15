@@ -321,21 +321,6 @@ MPM.flowFromS = function(self, weak_vertex, potential)
   end
 end
 
-MPM.debug = function(self)
-  do return end
-  local sub_graph_v = self.sub_graph_v
-  local sub_graph_size = self.sub_graph_size
-  local send, receive = self.send, self.receive
-  for i = 1, sub_graph_size do
-    local v = sub_graph_v[i]
-    print("state", v, send[v], receive[v], self.sub_graph_flag[v])
-  end
-  for i = 1, self.level[self.tpos] do
-    io.write(self.level_vertex_count[i])
-    io.write(" ")
-  end io.write("\n")
-end
-
 MPM.updateSubGraph = function(self)
   local sub_graph_v = self.sub_graph_v
   local sub_graph_size = self.sub_graph_size
@@ -403,9 +388,7 @@ end
 MPM.partialwork = function(self)
   local sum = 0
   while(self:subGraphConnected()) do
-    self:debug()
     local weak_vertex, potential = self:findWeakVertex()
-    print("flow", weak_vertex, potential)
     self:flowToT(weak_vertex, potential)
     self:flowFromS(weak_vertex, potential)
     self:updateSubGraph()
@@ -422,55 +405,5 @@ MPM.getMaxFlow = function(self)
   return ret
 end
 
-
---[[ yukicoder 177
-local w = io.read("*n")
-local n = io.read("*n")
-local j = {}
-for i = 1, n do
-  j[i] = io.read("*n")
-end
-local m = io.read("*n")
-local c = {}
-for i = 1, m do
-  c[i] = io.read("*n")
-end
-MPM:initialize(n + m + 2, n + m + 1, n + m + 2)
-for i = 1, n do
-  MPM:addEdge(n + m + 1, i, j[i])
-end
-for i = 1, m do
-  MPM:addEdge(n + i, n + m + 2, c[i])
-end
-local tmp = {}
-local inf = 1000000007
-for i = 1, m do
-  local q = io.read("*n")
-  for j = 1, n do
-    tmp[j] = true
-  end
-  for iq = 1, q do
-    local x = io.read("*n")
-    tmp[x] = false
-  end
-  for j = 1, n do
-    if tmp[j] then
-      MPM:addEdge(j, n + i, inf)
-    end
-  end
-end
-local ret = MPM:getMaxFlow()
--- print(ret)
-print(w <= ret and "SHIROBAKO" or "BANSAKUTSUKITA")
---]]
-
-MPM:initialize(7, 1, 7)
-MPM:addEdge(1, 2, 1)
-MPM:addEdge(1, 3, 2)
-MPM:addEdge(2, 4, 1)
-MPM:addEdge(3, 5, 3)
-MPM:addEdge(3, 6, 3)
-MPM:addEdge(4, 5, 1)
-MPM:addEdge(5, 7, 1)
-MPM:addEdge(6, 7, 2)
-print(MPM:getMaxFlow())
+--
+return MPM
