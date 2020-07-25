@@ -13,6 +13,8 @@ local function grayWalk(size, add_func, rm_func, work_func)
   for i = 1, size do
     bpos[bls(1, i - 1)] = i
   end
+  -- if need first work then use below
+  -- work_func()
   for i = 1, total do
     local v = grayCode(i)
     if prv < v then
