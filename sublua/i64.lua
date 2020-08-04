@@ -25,14 +25,19 @@ local function getstr14(v)
     v = v - z
   end
   v = tostring(v)
-  if #v < 13 then
+  if y == 0 then
+    return v
+  elseif #v < 13 then
     return y .. string.rep("0", 13 - #v) .. v
+  else
+    return y .. v
   end
-  return y .. v
 end
 zz = 500000000000123 --5 * 10^14 + x
 print(getstr14(zz))
 zz = 512301230123012 --5 * 10^14 + x
+print(getstr14(zz))
+zz = 1
 print(getstr14(zz))
 
 -- legacy
