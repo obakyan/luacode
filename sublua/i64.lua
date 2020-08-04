@@ -15,14 +15,36 @@ long long atoll(const char*);
 
 local function lltonumber(str)
   return C.atoll(str)
-  -- local ret = 0LL
-  -- local sign = str:sub(1, 1) ~= "-"
-  -- local begin = sign and 1 or 2
-  -- for i = begin, #str do
-  --   ret = ret * 10LL + str:sub(i, i):byte() - 48
-  -- end
-  -- if not sign then ret = ret * -1LL end
-  -- return ret
+end
+
+local function getstr14(v)
+  local z = 10000000000000 -- 10^13
+  local y = 0
+  while z < v do
+    y = y + 1
+    v = v - z
+  end
+  v = tostring(v)
+  if #v < 13 then
+    return y .. string.rep("0", 13 - #v) .. v
+  end
+  return y .. v
+end
+zz = 500000000000123 --5 * 10^14 + x
+print(getstr14(zz))
+zz = 512301230123012 --5 * 10^14 + x
+print(getstr14(zz))
+
+-- legacy
+local function lltonumber(str)
+  local ret = 0LL
+  local sign = str:sub(1, 1) ~= "-"
+  local begin = sign and 1 or 2
+  for i = begin, #str do
+    ret = ret * 10LL + str:sub(i, i):byte() - 48
+  end
+  if not sign then ret = ret * -1LL end
+  return ret
 end
 
 local i64 = {v = {0, 0}, c = 10000000000}
