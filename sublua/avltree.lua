@@ -102,6 +102,8 @@ AvlTree.rotRL = function(self, rparent, lparent)
   end
 end
 
+AvlTree.empty = function(self) return self.root <= 1 end
+
 AvlTree.push = function(self, val)
   if self.root <= 1 then self.root = self:makenode(val, 1) return end
   local pos = self.root
