@@ -1,6 +1,5 @@
 -- Strongly Connected Component Decomposition
 local n, m = io.read("*n", "*n")
-local s = io.read()
 local edge = {}
 local invedge = {}
 for i = 1, n do
