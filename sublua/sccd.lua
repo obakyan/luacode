@@ -1,10 +1,14 @@
 -- Strongly Connected Component Decomposition
 local n, m = io.read("*n", "*n")
 local edge = {}
+local edge_asked = {}
 local invedge = {}
+local invedge_asked = {}
 for i = 1, n do
   edge[i] = {}
+  edge_asked[i] = 0
   invedge[i] = {}
+  invedge_asked[i] = 0
 end
 local edgeinfo = {}
 for i = 1, m do
@@ -21,23 +25,39 @@ for i = 1, n do
   sccd_root[i] = 0
 end
 
-local function SCCD_dfs(src, dfs_way)
-  asked[src] = true
-  for i = 1, #edge[src] do
-    local dst = edge[src][i]
-    if not asked[dst] then
-      SCCD_dfs(dst, dfs_way)
+local function SCCD_dfs(spos, dfs_way)
+  local tasks = {spos}
+  while 0 < #tasks do
+    local src = tasks[#tasks]
+    asked[src] = true
+    table.remove(tasks)
+    if edge_asked[src] == #edge[src] then
+      table.insert(dfs_way, src)
+    else
+      table.insert(tasks, src)
+      edge_asked[src] = edge_asked[src] + 1
+      local dst = edge[src][edge_asked[src]]
+      if not asked[dst] then
+        table.insert(tasks, dst)
+      end
     end
   end
-  table.insert(dfs_way, src)
 end
 
-local function SCCD_invdfs(src, rootid)
-  sccd_root[src] = rootid
-  for i = 1, #invedge[src] do
-    local dst = invedge[src][i]
-    if asked[dst] and sccd_root[dst] == 0 then
-      SCCD_invdfs(dst, rootid)
+local function SCCD_invdfs(spos, rootid)
+  local tasks = {spos}
+  while 0 < #tasks do
+    local src = tasks[#tasks]
+    sccd_root[src] = rootid
+    table.remove(tasks)
+    while invedge_asked[src] < #invedge[src] do
+      invedge_asked[src] = invedge_asked[src] + 1
+      local dst = invedge[src][invedge_asked[src]]
+      if asked[dst] and sccd_root[dst] == 0 then
+        table.insert(tasks, src)
+        table.insert(tasks, dst)
+        break
+      end
     end
   end
 end
