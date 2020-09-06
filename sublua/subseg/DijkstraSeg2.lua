@@ -65,6 +65,7 @@ local st = SegTree.new(n, mergefunc, n + 1)
 for i = 1, n do
   local src = st.stage[1]
   if asked[src] then break end
+  if inf <= len[src] then break end
   asked[src] = true
   st:update(src)
   for dst, cost in pairs(edge[src]) do
