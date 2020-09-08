@@ -1,4 +1,3 @@
--- Strongly Connected Component Decomposition
 local n, m = io.read("*n", "*n")
 local edge = {}
 local edge_asked = {}
