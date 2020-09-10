@@ -36,8 +36,8 @@ LazyRangeSeg.resolve = function(self, right)
       local incval = self.lazy[i][curidx]
       if 0 < incval then
         incval = self.invfunc(incval, 1, 2)
-        self:resolveRange(i + 1, curidx * 2 - 1, incval)
-        self:resolveRange(i + 1, curidx * 2, incval)
+        self:resolveRange(i + 1, curidx * 2 - 1, incval, true)
+        self:resolveRange(i + 1, curidx * 2, incval, true)
         self.lazy[i + 1][curidx * 2 - 1] = self.func(self.lazy[i + 1][curidx * 2 - 1], incval)
         self.lazy[i + 1][curidx * 2] = self.func(self.lazy[i + 1][curidx * 2], incval)
       end
@@ -49,8 +49,9 @@ LazyRangeSeg.resolve = function(self, right)
     end
   end
 end
-LazyRangeSeg.resolveRange = function(self, stagepos, idx, value)
+LazyRangeSeg.resolveRange = function(self, stagepos, idx, value, shallow)
   self.stage[stagepos][idx] = self.func(self.stage[stagepos][idx], value)
+  if shallow then return end
   for i = stagepos - 1, 1, -1 do
     local dst = brs(idx + 1, 1)
     local rem = dst * 4 - 1 - idx
