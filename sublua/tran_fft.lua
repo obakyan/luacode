@@ -1,7 +1,7 @@
 local mfl = math.floor
-local TranFFT = {}
+local TFFT = {}
 
-TranFFT.initialize = function(self)
+TFFT.initialize = function(self)
   self.size = 18
   -- 2^18
   self.n = 262144
@@ -42,15 +42,15 @@ end
 -- x0, y0 <= 44892
 -- x1, y1 <= 22446
 -- max(x1y1*18375+(x1y0+x0y1)*44893+x0y0) < 10^14
-TranFFT.mul = function(self, x, y)
+TFFT.mul = function(self, x, y)
   local x0, y0 = x % 44893, y % 44893
   local x1, y1 = mfl(x / 44893), mfl(y / 44893)
   return (x1 * y1 * 18375 + (x1 * y0 + x0 * y1) * 44893 + x0 * y0) % self.mod
 end
 
-TranFFT.add = function(self, x, y) return (x + y) % self.mod end
+TFFT.add = function(self, x, y) return (x + y) % self.mod end
 
-TranFFT.fft_common = function(self, ary, wmul)
+TFFT.fft_common = function(self, ary, wmul)
   local ret = {}
   for i = 1, self.n do
     ret[i] = ary[self.binv[i]]
@@ -70,10 +70,10 @@ TranFFT.fft_common = function(self, ary, wmul)
   return ret
 end
 
-TranFFT.fft = function(self, ary)
+TFFT.fft = function(self, ary)
   return self:fft_common(ary, self.wmul)
 end
-TranFFT.ifft = function(self, ary)
+TFFT.ifft = function(self, ary)
   local ret = self:fft_common(ary, self.winvmul)
   for i = 1, self.n do
     ret[i] = self:mul(ret[i], self.ninv)
@@ -82,9 +82,9 @@ TranFFT.ifft = function(self, ary)
 end
 
 -- sample (ATC001-C)
-TranFFT:initialize()
+TFFT:initialize()
 local a, b = {}, {}
-for i = 1, TranFFT.n do
+for i = 1, TFFT.n do
   a[i] = 0
   b[i] = 0
 end
@@ -94,12 +94,12 @@ for i = 1, readn do
   b[i + 1] = io.read("*n")
 end
 
-local at = TranFFT:fft(a)
-local bt = TranFFT:fft(b)
-for i = 1, TranFFT.n do
-  at[i] = TranFFT:mul(at[i], bt[i])
+local at = TFFT:fft(a)
+local bt = TFFT:fft(b)
+for i = 1, TFFT.n do
+  at[i] = TFFT:mul(at[i], bt[i])
 end
-local c = TranFFT:ifft(at)
+local c = TFFT:ifft(at)
 for i = 2, 1 + readn * 2 do
   print(c[i])
 end
