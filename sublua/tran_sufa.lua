@@ -1,7 +1,7 @@
 local mmi, mma = math.min, math.max
 local mfl, mce = math.floor, math.ceil
-local TranSufA = {}
-TranSufA.makeSufA = function(self)
+local TSufA = {}
+TSufA.makeSufA = function(self)
   self.sufa = {}
   local n = #self.str
   local idx, tbl1, tbl2 = self.sufa, {}, {}
@@ -92,7 +92,7 @@ TranSufA.makeSufA = function(self)
     self.sufa_inv[self.sufa[i]] = i
   end
 end
-TranSufA.makeLCPA = function(self)
+TSufA.makeLCPA = function(self)
   assert(self.sufa)
   local n = #self.sufa
   self.lcpa = {}
@@ -118,7 +118,7 @@ TranSufA.makeLCPA = function(self)
   end
 end
 
-TranSufA.lowerBound = function(self, s)
+TSufA.lowerBound = function(self, s)
   if s <= self.str:sub(self.sufa[1], #self.str) then
     return 1
   end
@@ -137,22 +137,22 @@ TranSufA.lowerBound = function(self, s)
   return max
 end
 
-TranSufA.create = function(self, str)
+TSufA.create = function(self, str)
   self.str = str
   self:makeSufA()
   self:makeLCPA()
 end
 
-TranSufA.new = function(str)
+TSufA.new = function(str)
   local obj = {}
-  setmetatable(obj, {__index = TranSufA})
+  setmetatable(obj, {__index = TSufA})
   obj:create(str)
   return obj
 end
 
 -- sample
 local s = io.read()
-local sa = TranSufA.new(s)
+local sa = TSufA.new(s)
 print(os.clock())
 -- print(table.concat(sa.sufa, " "))
 -- print(table.concat(sa.sufa_inv, " "))
