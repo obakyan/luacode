@@ -33,3 +33,9 @@ jobs:
         cd sublua/test
         luajit mpm_basic.lua
         cd ../../
+
+    - name: Lazy SegTree test
+      run: |
+        cd sublua/test
+        luajit lazyseg_basic.lua
+        cd ../../
