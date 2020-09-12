@@ -82,6 +82,7 @@ end
 MinCostFlow.makeSubGraph = function(self)
   local inf = self.inf
   local len = self.len
+  local n = self.n
   local edge_dst, edge_cap = self.edge_dst, self.edge_cap
   local edge_dst_invedge_idx = self.edge_dst_invedge_idx
   local edge_cost = self.edge_cost
@@ -93,17 +94,28 @@ MinCostFlow.makeSubGraph = function(self)
     sub_graph_flag[i] = false
   end
   -- Bellman-Ford
+  local updated1, updated2 = {}, {}
+  for i = 1, n do
+    updated1[i] = true
+  end
   len[self.spos] = 0
-  local n = self.n
   for irp = 1, n do
+    local updsrc = irp % 2 == 1 and updated1 or updated2
+    local upddst = irp % 2 == 1 and updated2 or updated1
+    for i = 1, n do
+      upddst[i] = false
+    end
     for src = 1, n do
-      for i = 1, #edge_dst[src] do
-        local cap = edge_cap[src][i]
-        if 0 < cap then
-          local dst = edge_dst[src][i]
-          local cost = edge_cost[src][i]
-          if len[src] + cost < len[dst] then
-            len[dst] = len[src] + cost
+      if updsrc[src] then
+        local eddst, edcap, edcost = edge_dst[src], edge_cap[src], edge_cost[src]
+        for i = 1, #eddst do
+          if 0 < edcap[i] then
+            local dst = eddst[i]
+            local cost = edcost[i]
+            if len[src] + cost < len[dst] then
+              len[dst] = len[src] + cost
+              upddst[dst] = true
+            end
           end
         end
       end
