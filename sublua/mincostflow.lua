@@ -79,21 +79,50 @@ MinCostFlow.invwalk_recursive = function(self, invsrc)
   return false
 end
 
-MinCostFlow.makeSubGraph = function(self)
-  local inf = self.inf
+MinCostFlow.walkDK = function(self)
+  -- Dijkstra-like walk
+  local edge_dst, edge_cost, edge_cap = self.edge_dst, self.edge_cost, self.edge_cap
+  local len = self.len
+  local taskstate = {}
+  local tasks = {}
+  local tasknum, done = 0, 0
+  local tasklim = self.n
+  for i = 1, tasklim do taskstate[i] = false end
+  local function addtask(idx)
+    if not taskstate[idx] then
+      taskstate[idx] = true
+      tasknum = tasknum + 1
+      local taskidx = tasknum % tasklim
+      if taskidx == 0 then taskidx = tasklim end
+      tasks[taskidx] = idx
+    end
+  end
+  local function walk(src, dst, cost)
+    if len[src] + cost < len[dst] then
+      len[dst] = len[src] + cost
+      addtask(dst)
+    end
+  end
+  addtask(self.spos)
+  while done < tasknum do
+    done = done + 1
+    local taskidx = done % tasklim
+    if taskidx == 0 then taskidx = tasklim end
+    local idx = tasks[taskidx]
+    taskstate[idx] = false
+    local eddst, edcap, edcost = edge_dst[idx], edge_cap[idx], edge_cost[idx]
+    for i = 1, #eddst do
+      if 0 < edcap[i] then
+        walk(idx, eddst[i], edcost[i])
+      end
+    end
+  end
+end
+MinCostFlow.walkBF = function(self)
+  --Bellman-Ford walk
+  local edge_dst, edge_cost, edge_cap = self.edge_dst, self.edge_cost, self.edge_cap
   local len = self.len
   local n = self.n
-  local edge_dst, edge_cap = self.edge_dst, self.edge_cap
-  local edge_dst_invedge_idx = self.edge_dst_invedge_idx
-  local edge_cost = self.edge_cost
-  local sub_graph_v = self.sub_graph_v
-  local sub_graph_edgeidx = self.sub_graph_edgeidx
-  local sub_graph_flag = self.sub_graph_flag
-  for i = 1, self.n do
-    len[i] = inf
-    sub_graph_flag[i] = false
-  end
-  -- Bellman-Ford
   local updated1, updated2 = {}, {}
   for i = 1, n do
     updated1[i] = true
@@ -121,6 +150,28 @@ MinCostFlow.makeSubGraph = function(self)
       end
     end
   end
+end
+
+MinCostFlow.makeSubGraph = function(self)
+  local inf = self.inf
+  local len = self.len
+  local n = self.n
+  local edge_dst, edge_cap = self.edge_dst, self.edge_cap
+  local edge_dst_invedge_idx = self.edge_dst_invedge_idx
+  local edge_cost = self.edge_cost
+  local sub_graph_v = self.sub_graph_v
+  local sub_graph_edgeidx = self.sub_graph_edgeidx
+  local sub_graph_flag = self.sub_graph_flag
+  for i = 1, n do
+    len[i] = inf
+    sub_graph_flag[i] = false
+  end
+  len[self.spos] = 0
+
+  -- Bellman-Ford is good, but Dijkstra-like is very fast in some case
+  self:walkDK()
+  -- self:walkBF()
+
   self.sub_graph_size = 0
   if inf <= len[self.tpos] then
     return 0
