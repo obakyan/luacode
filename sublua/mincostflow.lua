@@ -18,6 +18,8 @@ MinCostFlow.initialize = function(self, n, spos, tpos, inf)
   self.edge_dst_invedge_idx = {}
   -- len[v] := length from spos. len[spos] := 0
   self.len = {}
+  -- sub_graph_flag[v] := whether to contains the vertex v in the sub-graph or not
+  self.sub_graph_flag = {}
   -- sub_graph_v[i] := list of vertexes that are contained in the sub-graph. from tpos to spos.
   self.sub_graph_v = {}
   -- sub_graph_edgeidx[i] := edge index from sub_graph_v[i + 1] to sub_graph_v[i]
@@ -32,6 +34,7 @@ MinCostFlow.initialize = function(self, n, spos, tpos, inf)
     self.edge_initialcap[i] = {}
     self.edge_dst_invedge_idx[i] = {}
     self.len[i] = 0
+    self.sub_graph_flag[i] = false
   end
 end
 
@@ -47,6 +50,35 @@ MinCostFlow.addEdge = function(self, src, dst, cost, cap)
   table.insert(self.edge_initialcap[dst], 0)--invcap
   table.insert(self.edge_dst_invedge_idx[dst], #self.edge_dst[src])
 end
+MinCostFlow.invwalk_recursive = function(self, invsrc)
+  if invsrc == self.spos then return true end
+  local edge_dst, edge_cap, edge_cost = self.edge_dst, self.edge_cap, self.edge_cost
+  local edge_dst_invedge_idx = self.edge_dst_invedge_idx
+  local len = self.len
+  local sub_graph_flag = self.sub_graph_flag
+  local sub_graph_v = self.sub_graph_v
+  local sub_graph_edgeidx = self.sub_graph_edgeidx
+  for i = 1, #edge_dst[invsrc] do
+    local invdst = edge_dst[invsrc][i]
+    local j = edge_dst_invedge_idx[invsrc][i]
+    if 0 < edge_cap[invdst][j]
+    and len[invdst] + edge_cost[invdst][j] == len[invsrc]
+    and not sub_graph_flag[invdst] then
+      self.sub_graph_size = self.sub_graph_size + 1
+      sub_graph_v[self.sub_graph_size] = invdst
+      sub_graph_edgeidx[self.sub_graph_size - 1] = j
+      sub_graph_flag[invdst] = true
+      if self:invwalk_recursive(invdst) then
+        return true
+      else
+        self.sub_graph_flag[invdst] = false
+        self.sub_graph_size = self.sub_graph_size - 1
+      end
+    end
+  end
+  return false
+end
+
 MinCostFlow.makeSubGraph = function(self)
   local inf = self.inf
   local len = self.len
@@ -55,8 +87,10 @@ MinCostFlow.makeSubGraph = function(self)
   local edge_cost = self.edge_cost
   local sub_graph_v = self.sub_graph_v
   local sub_graph_edgeidx = self.sub_graph_edgeidx
+  local sub_graph_flag = self.sub_graph_flag
   for i = 1, self.n do
     len[i] = inf
+    sub_graph_flag[i] = false
   end
   -- Bellman-Ford
   len[self.spos] = 0
@@ -75,29 +109,20 @@ MinCostFlow.makeSubGraph = function(self)
       end
     end
   end
+  self.sub_graph_size = 0
   if inf <= len[self.tpos] then
-    self.sub_graph_size = 0
     return 0
   end
-  local min_capacity = inf
   -- restore route (from tpos to spos)
+  self.sub_graph_size = 1
   sub_graph_v[1] = self.tpos
-  local graph_size = 1
-  while sub_graph_v[graph_size] ~= self.spos do
-    local invsrc = sub_graph_v[graph_size]
-    for i = 1, #edge_dst[invsrc] do
-      local invdst = edge_dst[invsrc][i]
-      local j = edge_dst_invedge_idx[invsrc][i]
-      if 0 < edge_cap[invdst][j] and len[invdst] + edge_cost[invdst][j] == len[invsrc] then
-        min_capacity = mmi(min_capacity, edge_cap[invdst][j])
-        graph_size = graph_size + 1
-        sub_graph_v[graph_size] = invdst
-        sub_graph_edgeidx[graph_size - 1] = j
-        break
-      end
-    end
+  self:invwalk_recursive(self.tpos)
+  local min_capacity = inf
+  for i = self.sub_graph_size, 2, -1 do
+    local src = sub_graph_v[i]
+    local j = sub_graph_edgeidx[i - 1]
+    min_capacity = mmi(min_capacity, edge_cap[src][j])
   end
-  self.sub_graph_size = graph_size
   return min_capacity
 end
 
