@@ -34,6 +34,12 @@ jobs:
         luajit mpm_basic.lua
         cd ../../
 
+    - name: MinCostFlow test
+      run: |
+        cd sublua/test
+        luajit mincostflow_basic.lua
+        cd ../../
+
     - name: Lazy SegTree test
       run: |
         cd sublua/test
