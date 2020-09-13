@@ -83,11 +83,15 @@ MinCostFlow.walkDK = function(self)
   -- Dijkstra-like walk
   local edge_dst, edge_cost, edge_cap = self.edge_dst, self.edge_cost, self.edge_cap
   local len = self.len
-  local taskstate = {}
-  local tasks = {}
-  local tasknum, done = 0, 0
   local tasklim = self.n
-  for i = 1, tasklim do taskstate[i] = false end
+  if not self.taskstate then
+    self.taskstate = {}
+    self.tasks = {}
+    for i = 1, tasklim do self.taskstate[i] = false end
+  end
+  local taskstate = self.taskstate
+  local tasks = self.tasks
+  local tasknum, done = 0, 0
   local function addtask(idx)
     if not taskstate[idx] then
       taskstate[idx] = true
