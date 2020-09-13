@@ -127,10 +127,15 @@ MinCostFlow.walkBF = function(self)
   local edge_dst, edge_cost, edge_cap = self.edge_dst, self.edge_cost, self.edge_cap
   local len = self.len
   local n = self.n
-  local updated1, updated2 = {}, {}
-  for i = 1, n do
-    updated1[i] = true
+  if not self.updated1 then
+    self.updated1 = {}
+    self.updated2 = {}
   end
+  local updated1, updated2 = self.updated1, self.updated2
+  for i = 1, n do
+    updated1[i] = false
+  end
+  updated1[self.spos] = true
   len[self.spos] = 0
   for irp = 1, n do
     local updsrc = irp % 2 == 1 and updated1 or updated2
@@ -138,6 +143,7 @@ MinCostFlow.walkBF = function(self)
     for i = 1, n do
       upddst[i] = false
     end
+    local alldone = true
     for src = 1, n do
       if updsrc[src] then
         local eddst, edcap, edcost = edge_dst[src], edge_cap[src], edge_cost[src]
@@ -148,11 +154,13 @@ MinCostFlow.walkBF = function(self)
             if len[src] + cost < len[dst] then
               len[dst] = len[src] + cost
               upddst[dst] = true
+              alldone = false
             end
           end
         end
       end
     end
+    if alldone then break end
   end
 end
 
