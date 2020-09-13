@@ -18,7 +18,7 @@ MinCostFlow.initialize = function(self, n, spos, tpos, inf)
   self.edge_dst_invedge_idx = {}
   -- len[v] := length from spos. len[spos] := 0
   self.len = {}
-  -- sub_graph_flag[v] := whether to contains the vertex v in the sub-graph or not
+  -- sub_graph_flag[v] := temporal flag to restore shortest path
   self.sub_graph_flag = {}
   -- sub_graph_v[i] := list of vertexes that are contained in the sub-graph. from tpos to spos.
   self.sub_graph_v = {}
@@ -52,15 +52,16 @@ MinCostFlow.addEdge = function(self, src, dst, cost, cap)
 end
 MinCostFlow.invwalk_recursive = function(self, invsrc)
   if invsrc == self.spos then return true end
-  local edge_dst, edge_cap, edge_cost = self.edge_dst, self.edge_cap, self.edge_cost
-  local edge_dst_invedge_idx = self.edge_dst_invedge_idx
+  local edge_cap, edge_cost = self.edge_cap, self.edge_cost
   local len = self.len
   local sub_graph_flag = self.sub_graph_flag
   local sub_graph_v = self.sub_graph_v
   local sub_graph_edgeidx = self.sub_graph_edgeidx
-  for i = 1, #edge_dst[invsrc] do
-    local invdst = edge_dst[invsrc][i]
-    local j = edge_dst_invedge_idx[invsrc][i]
+  local eddsrc = self.edge_dst[invsrc]
+  local eddiisrc = self.edge_dst_invedge_idx[invsrc]
+  for i = 1, #eddsrc do
+    local invdst = eddsrc[i]
+    local j = eddiisrc[i]
     if 0 < edge_cap[invdst][j]
     and len[invdst] + edge_cost[invdst][j] == len[invsrc]
     and not sub_graph_flag[invdst] then
@@ -71,7 +72,6 @@ MinCostFlow.invwalk_recursive = function(self, invsrc)
       if self:invwalk_recursive(invdst) then
         return true
       else
-        self.sub_graph_flag[invdst] = false
         self.sub_graph_size = self.sub_graph_size - 1
       end
     end
