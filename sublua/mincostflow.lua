@@ -93,7 +93,7 @@ MinCostFlow.walkDK = function(self)
   local tasks = self.tasks
   local tasknum, done = 0, 0
   local function addtask(idx)
-    if not taskstate[idx] then
+    if not taskstate[idx] and idx ~= self.tpos then
       taskstate[idx] = true
       tasknum = tasknum + 1
       local taskidx = tasknum % tasklim
