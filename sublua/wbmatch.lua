@@ -1,3 +1,5 @@
+-- [DEPRECATED]
+-- USE "ABmatch" (Hopcroft-Karp)
 local WhiteBlack = {}
 
 WhiteBlack.create = function(self)
