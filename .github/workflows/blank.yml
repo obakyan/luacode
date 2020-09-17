@@ -45,3 +45,9 @@ jobs:
         cd sublua/test
         luajit lazyseg_basic.lua
         cd ../../
+
+    - name: ABmatch test
+      run: |
+        cd sublua/test
+        luajit abmatch_basic.lua
+        cd ../../
