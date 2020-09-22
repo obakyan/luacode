@@ -1,5 +1,5 @@
 -- 5.3
--- Sum_{i=0}^{n-1} floor{(a * i + b) / b}
+-- Sum_{i=0}^{n-1} floor{(a * i + b) / m}
 local function floorSum(n, m, a, b)
   local ans = 0
   while true do
