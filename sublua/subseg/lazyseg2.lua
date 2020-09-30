@@ -54,8 +54,8 @@ LazyRangeSeg.resolve = function(self, right)
         self:resolveRange(i + 1, curidx * 2, incval, true)
         self.lazy[i + 1][curidx * 2 - 1] = self.func(self.lazy[i + 1][curidx * 2 - 1], incval)
         self.lazy[i + 1][curidx * 2] = self.func(self.lazy[i + 1][curidx * 2], incval)
+        self.lazy[i][curidx] = self.emptyvalue
       end
-      self.lazy[i][curidx] = self.emptyvalue
     elseif p == right then
       break
     else
