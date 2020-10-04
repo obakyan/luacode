@@ -153,6 +153,18 @@ ABmatch.matching = function(self)
     end
     lv = self:makeAugPath()
   end
+  self.executed = true
+end
+
+ABmatch.getMatchCount = function(self)
+  if not self.executed then
+    self:matching()
+  end
+  local cnt = 0
+  for i = 1, #self.dst do
+    if self.dst[i] then cnt = cnt + 1 end
+  end
+  return cnt
 end
 
 ABmatch.new = function(an, bn)
