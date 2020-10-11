@@ -102,6 +102,31 @@ LazyRangeSeg.setRange = function(self, left, right, value)
     left = left + sz
   end
 end
+
+-- lower_bound: experimental
+-- accepted at "joisc2010_hideseek"
+LazyRangeSeg.lower_bound = function(self, val)
+  local ret, retpos = self.emptyvalue, 0
+  local stagenum = self.stagenum
+  local stage, l, r = 1, 1, bls(1, stagenum - 1)
+  while true do
+    local sz = bls(1, stagenum - stage)
+    self:resolve(l + sz - 1)
+    local tmp = self.func(ret, self.stage[stage][mce(l / sz)])
+    if tmp < val then
+      ret, retpos = tmp, l + sz - 1
+      if l + sz <= r then stage, l = stage + 1, l + sz
+      else break
+      end
+    else
+      if sz ~= 1 then stage, r = stage + 1, l + sz - 2
+      else break
+      end
+    end
+  end
+  return retpos + 1
+end
+
 LazyRangeSeg.addAll = function(self, value)
   self.stage[1][1] = self.stage[1][1] + value * bls(1, self.stagenum - 1)
   self.lazy[1][1] = self.lazy[1][1] + value * bls(1, self.stagenum - 1)
