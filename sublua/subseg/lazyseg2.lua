@@ -73,6 +73,22 @@ LazyRangeSeg.resolveRange = function(self, stagepos, idx, value, shallow)
     idx = dst
   end
 end
+LazyRangeSeg.resolveAll = function(self)
+  for i = 1, self.stagenum - 1 do
+    local cnt = bls(1, i - 1)
+    for j = 1, cnt do
+      local incval = self.lazy[i][j]
+      if 0 < incval then
+        incval = self.invfunc(incval, 1, 2)
+        self:resolveRange(i + 1, j * 2 - 1, incval, true)
+        self:resolveRange(i + 1, j * 2, incval, true)
+        self.lazy[i + 1][j * 2 - 1] = self.func(self.lazy[i + 1][j * 2 - 1], incval)
+        self.lazy[i + 1][j * 2] = self.func(self.lazy[i + 1][j * 2], incval)
+        self.lazy[i][j] = self.emptyvalue
+      end
+    end
+  end
+end
 LazyRangeSeg.getRange = function(self, left, right)
   if 1 < left then self:resolve(left - 1) end
   self:resolve(right)
