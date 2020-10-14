@@ -1,8 +1,8 @@
 local mfl, mce = math.floor, math.ceil
 
 -- Bezout equation
--- solve a * x[1] + b * y[1] = 1
--- return value is x[1], y[1]
+-- solve a * x + b * y = 1
+-- return value is x, y
 -- gcd(a, b) should be 1
 local function bezout_eq(a, b)
   if b == 0 then
