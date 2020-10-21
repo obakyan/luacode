@@ -24,6 +24,12 @@ AvlTree.create = function(self, lessthan, n)
   end
 end
 
+AvlTree.clear = function(self)
+  self.root = 1
+  local np1 = #self.v
+  for i = np1, 2, -1 do self.box[np1 - i + 1] = i end
+end
+
 AvlTree.recalc = function(self, i)
   local kl, kr = self.l[i], self.r[i]
   if 1 < kl then self.lc[i] = 1 + mma(self.lc[kl], self.rc[kl])

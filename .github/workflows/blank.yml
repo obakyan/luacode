@@ -19,7 +19,7 @@ jobs:
     - name: AvlTree test
       run: |
         cd sublua/test
-        luajit avltree_arc074d.lua
+        luajit avltree_basic.lua
         cd ../../
 
     - name: SegTree test
