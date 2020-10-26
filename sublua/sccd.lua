@@ -1,30 +1,28 @@
-local n, m = io.read("*n", "*n")
-local edge = {}
-local edge_asked = {}
-local invedge = {}
-local invedge_asked = {}
-for i = 1, n do
-  edge[i] = {}
-  edge_asked[i] = 0
-  invedge[i] = {}
-  invedge_asked[i] = 0
+local SCCD = {}
+SCCD.create = function(self, n)
+  self.n = n
+  self.asked, self.root = {}, {}
+  self.edge, self.edge_asked = {}, {}
+  self.invedge, self.invedge_asked = {}, {}
+  for i = 1, n do
+    self.asked[i] = false
+    self.root[i] = 0
+    self.edge[i] = {}
+    self.edge_asked[i] = 0
+    self.invedge[i] = {}
+    self.invedge_asked[i] = 0
+  end
+  self.edgeinfo = {}
 end
-local edgeinfo = {}
-for i = 1, m do
-  local a, b = io.read("*n", "*n")
-  edgeinfo[i] = {a, b}
-  table.insert(edge[a], b)
-  table.insert(invedge[b], a)
-end
-
-local asked = {}
-local sccd_root = {}
-for i = 1, n do
-  asked[i] = false
-  sccd_root[i] = 0
+SCCD.addEdge = function(self, src, dst)
+  table.insert(self.edge[src], dst)
+  table.insert(self.invedge[dst], src)
+  table.insert(self.edgeinfo, {src, dst})
 end
 
-local function SCCD_dfs(spos, dfs_way)
+SCCD.dfs = function(self, spos, dfs_way)
+  local asked = self.asked
+  local edge, edge_asked = self.edge, self.edge_asked
   local tasks = {spos}
   while 0 < #tasks do
     local src = tasks[#tasks]
@@ -43,16 +41,18 @@ local function SCCD_dfs(spos, dfs_way)
   end
 end
 
-local function SCCD_invdfs(spos, rootid)
+SCCD.invdfs = function(self, spos, rootid)
+  local asked, root = self.asked, self.root
+  local invedge, invedge_asked = self.invedge, self.invedge_asked
   local tasks = {spos}
   while 0 < #tasks do
     local src = tasks[#tasks]
-    sccd_root[src] = rootid
+    root[src] = rootid
     table.remove(tasks)
     while invedge_asked[src] < #invedge[src] do
       invedge_asked[src] = invedge_asked[src] + 1
       local dst = invedge[src][invedge_asked[src]]
-      if asked[dst] and sccd_root[dst] == 0 then
+      if asked[dst] and root[dst] == 0 then
         table.insert(tasks, src)
         table.insert(tasks, dst)
         break
@@ -61,41 +61,46 @@ local function SCCD_invdfs(spos, rootid)
   end
 end
 
-local function SCCD_categorize()
-  for src = 1, n do
+SCCD.categorize = function(self)
+  local asked, root = self.asked, self.root
+  for src = 1, self.n do
     if not asked[src] then
       local dfs_way = {}
-      SCCD_dfs(src, dfs_way)
+      self:dfs(src, dfs_way)
       for i = #dfs_way, 1, -1 do
         local src = dfs_way[i]
-        if sccd_root[src] == 0 then
-          SCCD_invdfs(src, src)
+        if root[src] == 0 then
+          self:invdfs(src, src)
         end
       end
     end
   end
 end
 
-local gsize = {}
-local gedge, ginvedge = {}, {}
-local glen = {}
-local gmember = {}
 
-local function SCCD_make_group_graph()
-  for i = 1, n do
+SCCD.make_group_graph = function(self)
+  self.gsize = {}
+  self.gedge, self.ginvedge = {}, {}
+  self.glen = {}
+  self.gmember = {}
+  local gsize, gmember, glen = self.gsize, self.gmember, self.glen
+  local gedge, ginvedge = self.gedge, self.ginvedge
+  local root = self.root
+  local edgeinfo = self.edgeinfo
+  for i = 1, self.n do
     gsize[i] = 0
     gedge[i], ginvedge[i] = {}, {}
     glen[i] = 0
     gmember[i] = {}
   end
-  for i = 1, n do
-    local r = sccd_root[i]
+  for i = 1, self.n do
+    local r = root[i]
     gsize[r] = gsize[r] + 1
     table.insert(gmember[r], i)
   end
-  for i = 1, m do
+  for i = 1, #edgeinfo do
     local a, b = edgeinfo[i][1], edgeinfo[i][2]
-    local ra, rb = sccd_root[a], sccd_root[b]
+    local ra, rb = root[a], root[b]
     if ra ~= rb then
       table.insert(gedge[ra], rb)
       table.insert(ginvedge[rb], ra)
@@ -103,16 +108,19 @@ local function SCCD_make_group_graph()
   end
 end
 
-local function SCCD_toposort()
+SCCD.toposort = function(self)
+  self:make_group_graph()
+  local gsize, gedge, ginvedge = self.gsize, self.gedge, self.ginvedge
+  local topoary = {}
+  self.topoary = topoary
   local topo_tasks = {}
   local topo_asked_cnt = {}
-  for i = 1, n do
+  for i = 1, self.n do
     topo_asked_cnt[i] = 0
     if 0 < gsize[i] and #ginvedge[i] == 0 then
       table.insert(topo_tasks, i)
     end
   end
-  local topoary = {}
   local topo_done = 0
   while topo_done < #topo_tasks do
     topo_done = topo_done + 1
@@ -129,20 +137,28 @@ local function SCCD_toposort()
   return topoary
 end
 
-SCCD_categorize()
-SCCD_make_group_graph()
-
-for i = 1, n do
-  if 0 < gsize[i] then
-    print(i .. " : " .. table.concat(gmember[i], ", "))
-    for j = 1, #gedge[i] do
-      print("    edge to " .. gedge[i][j])
-    end
-    for j = 1, #ginvedge[i] do
-      print("    edge from " .. ginvedge[i][j])
-    end
-  end
+SCCD.new = function(n)
+  local obj = {}
+  setmetatable(obj, {__index = SCCD})
+  obj:create(n)
+  return obj
 end
 
-local topoary = SCCD_toposort()
-print(table.concat(topoary, " "))
+local n, m = io.read("*n", "*n")
+local sccd = SCCD.new(n)
+for i = 1, m do
+  local a, b = io.read("*n", "*n")
+  a, b = a + 1, b + 1
+  sccd:addEdge(a, b)
+end
+sccd:categorize()
+local ary = sccd:toposort()
+print(#ary)
+for i = 1, #ary do
+  local r = ary[i]
+  io.write(#sccd.gmember[r])
+  for j = 1, #sccd.gmember[r] do
+    io.write(" " .. sccd.gmember[r][j] - 1)
+  end
+  io.write("\n")
+end
