@@ -17,7 +17,8 @@ end
 SCCD.addEdge = function(self, src, dst)
   table.insert(self.edge[src], dst)
   table.insert(self.invedge[dst], src)
-  table.insert(self.edgeinfo, {src, dst})
+  table.insert(self.edgeinfo, src)
+  table.insert(self.edgeinfo, dst)
 end
 
 SCCD.dfs = function(self, spos, dfs_way)
@@ -98,8 +99,8 @@ SCCD.make_group_graph = function(self)
     gsize[r] = gsize[r] + 1
     table.insert(gmember[r], i)
   end
-  for i = 1, #edgeinfo do
-    local a, b = edgeinfo[i][1], edgeinfo[i][2]
+  for i = 1, #edgeinfo, 2 do
+    local a, b = edgeinfo[i], edgeinfo[i + 1]
     local ra, rb = root[a], root[b]
     if ra ~= rb then
       table.insert(gedge[ra], rb)
