@@ -24,12 +24,13 @@ SegTree.create = function(self, n, func, emptyvalue)
   for i = 1, n do self.stage[mul + i - 1] = i end
   self:updateAll()
 end
-SegTree.update = function(self, idx)
+SegTree.update = function(self, idx, force)
   idx = idx + pow2[self.stagenum] - 1
   for i = self.stagenum - 1, 1, -1 do
     local dst = mfl(idx / 2)
     local rem = dst * 4 + 1 - idx
     self.stage[dst] = self.func(self.stage[idx], self.stage[rem])
+    if not force and self.stage[dst] ~= self.stage[idx] then break end
     idx = dst
   end
 end
@@ -67,7 +68,7 @@ for i = 1, n do
   if asked[src] then break end
   if inf <= len[src] then break end
   asked[src] = true
-  st:update(src)
+  st:update(src, true)
   for dst, cost in pairs(edge[src]) do
     if len[src] + cost < len[dst] then
       len[dst] = len[src] + cost
@@ -77,3 +78,4 @@ for i = 1, n do
 end
 
 print(len[n])
+-- test: https://yukicoder.me/problems/no/1065
