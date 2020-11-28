@@ -50,33 +50,38 @@ MinCostFlow.addEdge = function(self, src, dst, cost, cap)
   table.insert(self.edge_initialcap[dst], 0)--invcap
   table.insert(self.edge_dst_invedge_idx[dst], #self.edge_dst[src])
 end
-MinCostFlow.invwalk_recursive = function(self, invsrc)
-  if invsrc == self.spos then return true end
+MinCostFlow.invwalk_recursive = function(self)
   local edge_cap, edge_cost = self.edge_cap, self.edge_cost
   local len = self.len
   local sub_graph_flag = self.sub_graph_flag
   local sub_graph_v = self.sub_graph_v
   local sub_graph_edgeidx = self.sub_graph_edgeidx
-  local eddsrc = self.edge_dst[invsrc]
-  local eddiisrc = self.edge_dst_invedge_idx[invsrc]
-  for i = 1, #eddsrc do
-    local invdst = eddsrc[i]
-    local j = eddiisrc[i]
-    if 0 < edge_cap[invdst][j]
-    and len[invdst] + edge_cost[invdst][j] == len[invsrc]
-    and not sub_graph_flag[invdst] then
-      self.sub_graph_size = self.sub_graph_size + 1
-      sub_graph_v[self.sub_graph_size] = invdst
-      sub_graph_edgeidx[self.sub_graph_size - 1] = j
-      sub_graph_flag[invdst] = true
-      if self:invwalk_recursive(invdst) then
-        return true
-      else
-        self.sub_graph_size = self.sub_graph_size - 1
+
+  local searched_cnt = {0}
+  while true do
+    local invsrc = sub_graph_v[self.sub_graph_size]
+    if invsrc == self.spos then break end
+    local eddsrc = self.edge_dst[invsrc]
+    local eddiisrc = self.edge_dst_invedge_idx[invsrc]
+    local i = searched_cnt[self.sub_graph_size]
+    if i < #eddsrc then
+      i = i + 1
+      searched_cnt[self.sub_graph_size] = i
+      local invdst = eddsrc[i]
+      local j = eddiisrc[i]
+      if 0 < edge_cap[invdst][j]
+      and len[invdst] + edge_cost[invdst][j] == len[invsrc]
+      and not sub_graph_flag[invdst] then
+        self.sub_graph_size = self.sub_graph_size + 1
+        sub_graph_v[self.sub_graph_size] = invdst
+        sub_graph_edgeidx[self.sub_graph_size - 1] = j
+        sub_graph_flag[invdst] = true
+        searched_cnt[self.sub_graph_size] = 0
       end
+    else
+      self.sub_graph_size = self.sub_graph_size - 1
     end
   end
-  return false
 end
 
 MinCostFlow.walkDK = function(self)
@@ -191,7 +196,7 @@ MinCostFlow.makeSubGraph = function(self)
   -- restore route (from tpos to spos)
   self.sub_graph_size = 1
   sub_graph_v[1] = self.tpos
-  self:invwalk_recursive(self.tpos)
+  self:invwalk_recursive()
   local min_capacity = inf
   for i = self.sub_graph_size, 2, -1 do
     local src = sub_graph_v[i]
