@@ -11,6 +11,8 @@ MinCostFlow.initialize = function(self, n, spos, tpos, inf)
   self.edge_cost = {}
   -- edge_cap[src][i] := capacity from src to edge_dst[src][i]
   self.edge_cap = {}
+  -- initial capacity. corresponding to edge_cap
+  self.edge_initialcap = {}
   -- edge_dst_invedge_idx[src][i] := "j" where edge_dst[dst][j] == src
   -- in this case, edge_dst_invedge_idx[dst][j] should be "i".
   self.edge_dst_invedge_idx = {}
@@ -29,6 +31,7 @@ MinCostFlow.initialize = function(self, n, spos, tpos, inf)
     self.edge_dst[i] = {}
     self.edge_cost[i] = {}
     self.edge_cap[i] = {}
+    self.edge_initialcap[i] = {}
     self.edge_dst_invedge_idx[i] = {}
     self.len[i] = 0
     self.sub_graph_flag[i] = false
@@ -39,10 +42,12 @@ MinCostFlow.addEdge = function(self, src, dst, cost, cap)
   table.insert(self.edge_dst[src], dst)
   table.insert(self.edge_cost[src], cost)
   table.insert(self.edge_cap[src], cap)
+  table.insert(self.edge_initialcap[src], cap)
   table.insert(self.edge_dst_invedge_idx[src], 1 + #self.edge_dst[dst])
   table.insert(self.edge_dst[dst], src)
   table.insert(self.edge_cost[dst], -cost)
   table.insert(self.edge_cap[dst], 0)--invcap
+  table.insert(self.edge_initialcap[dst], 0)--invcap
   table.insert(self.edge_dst_invedge_idx[dst], #self.edge_dst[src])
 end
 MinCostFlow.invwalk_recursive = function(self, invsrc)
