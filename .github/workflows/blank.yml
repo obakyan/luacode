@@ -51,3 +51,9 @@ jobs:
         cd sublua/test
         luajit abmatch_basic.lua
         cd ../../
+
+    - name: TFDP test
+      run: |
+        cd sublua/test
+        luajit tfdp_basic.lua
+        cd ../../
