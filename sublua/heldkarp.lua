@@ -47,7 +47,7 @@ local function heldkarp_doall(n, alltask, stagetask)
           local tmp = used
           for j = 1, n do
             if tmp % 2 == 0 then
-              -- alltask[j][used + mul] = val + func(from i to j)
+              -- alltask[j][used + mul] = mma(alltask[j][used + mul], val + func(from i to j))
             else
               tmp = tmp - 1
             end
