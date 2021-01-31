@@ -57,3 +57,9 @@ jobs:
         cd sublua/test
         luajit tfdp_basic.lua
         cd ../../
+
+    - name: BITBOX test
+      run: |
+        cd sublua/test
+        luajit bitbox_basic.lua
+        cd ../../
