@@ -7,7 +7,6 @@ local TFDP = {}
 TFDP.initialize = function(self, lim)
   self.lim = lim
   self.sz = 30
-  self.b = {}
   self.way = true
   self.bcnt = mce((lim + 1) / self.sz)
   self.b1, self.b2 = {1}, {}
