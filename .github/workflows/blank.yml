@@ -63,3 +63,9 @@ jobs:
         cd sublua/test
         luajit bitbox_basic.lua
         cd ../../
+
+    - name: Heapq test
+      run: |
+        cd sublua/test
+        luajit heapq_basic.lua
+        cd ../../
