@@ -1,5 +1,3 @@
-local mfl, mce = math.floor, math.ceil
-local mmi, mma = math.min, math.max
 local bls, brs = bit.lshift, bit.rshift
 local Heapq = {}
 Heapq.create = function(self, lt)
