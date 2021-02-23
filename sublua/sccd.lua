@@ -81,16 +81,17 @@ end
 
 SCCD.make_group_graph = function(self)
   self.gsize = {}
-  self.gedge, self.ginvedge = {}, {}
+  self.gedge = {}
+  self.gpcnt = {}
   self.glen = {}
   self.gmember = {}
   local gsize, gmember, glen = self.gsize, self.gmember, self.glen
-  local gedge, ginvedge = self.gedge, self.ginvedge
+  local gedge, gpcnt = self.gedge, self.gpcnt
   local root = self.root
   local edgeinfo = self.edgeinfo
   for i = 1, self.n do
     gsize[i] = 0
-    gedge[i], ginvedge[i] = {}, {}
+    gedge[i], gpcnt[i] = {}, 0
     glen[i] = 0
     gmember[i] = {}
   end
@@ -104,21 +105,19 @@ SCCD.make_group_graph = function(self)
     local ra, rb = root[a], root[b]
     if ra ~= rb then
       table.insert(gedge[ra], rb)
-      table.insert(ginvedge[rb], ra)
+      gpcnt[rb] = gpcnt[rb] + 1
     end
   end
 end
 
 SCCD.toposort = function(self)
   self:make_group_graph()
-  local gsize, gedge, ginvedge = self.gsize, self.gedge, self.ginvedge
+  local gsize, gedge, gpcnt = self.gsize, self.gedge, self.gpcnt
   local topoary = {}
   self.topoary = topoary
   local topo_tasks = {}
-  local topo_asked_cnt = {}
   for i = 1, self.n do
-    topo_asked_cnt[i] = 0
-    if 0 < gsize[i] and #ginvedge[i] == 0 then
+    if 0 < gsize[i] and gpcnt[i] == 0 then
       table.insert(topo_tasks, i)
     end
   end
@@ -129,8 +128,8 @@ SCCD.toposort = function(self)
     topoary[topo_done] = g
     for i = 1, #gedge[g] do
       local dst = gedge[g][i]
-      topo_asked_cnt[dst] = topo_asked_cnt[dst] + 1
-      if topo_asked_cnt[dst] == #ginvedge[dst] then
+      gpcnt[dst] = gpcnt[dst] - 1
+      if gpcnt[dst] == 0 then
         table.insert(topo_tasks, dst)
       end
     end
