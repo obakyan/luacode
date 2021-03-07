@@ -1,4 +1,3 @@
--- use a 1D Seg class ( stage[], not stage[][])
 local mfl, mce = math.floor, math.ceil
 local mmi, mma = math.min, math.max
 local pow2 = {1}
@@ -15,7 +14,7 @@ end
 SegTree.create = function(self, n, func, emptyvalue)
   self.func, self.emptyvalue = func, emptyvalue
   local stagenum, mul = 1, 1
-  self.stage = {}
+  self.stage = {} -- use 1D Tree (stage[], not stage[][])
   while mul < n do
     mul, stagenum = mul * 2, stagenum + 1
   end
