@@ -69,3 +69,9 @@ jobs:
         cd sublua/test
         luajit heapq_basic.lua
         cd ../../
+
+    - name: PPUF test
+      run: |
+        cd sublua/test
+        luajit ppuf_basic.lua
+        cd ../../
