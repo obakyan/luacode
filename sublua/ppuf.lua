@@ -33,9 +33,13 @@ PPUF.unite = function(self, v1, v2)
   local ec = self.edgecnt + 1
   self.edgecnt = ec
   if r1 == r2 then return end
-  if self.rank[r2] < self.rank[r1] then r1, r2 = r2, r1 end
+  local rank = self.rank
+  if rank[r2] < rank[r1] then r1, r2 = r2, r1 end
   self.parent[r1] = r2
   self.updated_time[r1] = ec
+  if rank[r1] == rank[r2] then
+    rank[r2] = rank[r2] + 1
+  end
   local weight = self.weight
   local new_w = weight[r2][#weight[r2]] + weight[r1][#weight[r1]]
   table.insert(self.weight_change_time[r2], ec)
