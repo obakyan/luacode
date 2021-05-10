@@ -107,7 +107,6 @@ MPM.makeSubGraph = function(self)
           level[dst] = level[src] + 1
           taskcnt = taskcnt + 1
           sub_graph_v[taskcnt] = dst
-        elseif level[dst] == level[src] + 1 then
         end
       end
     end
