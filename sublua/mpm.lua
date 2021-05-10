@@ -202,7 +202,6 @@ end
 
 MPM.flowToT = function(self, weak_vertex, potential)
   if weak_vertex == self.tpos then return end
-  local sub_graph_flag = self.sub_graph_flag
   local edge_dst, edge_cap = self.edge_dst, self.edge_cap
   local edge_dst_invedge_idx = self.edge_dst_invedge_idx
   local sub_graph_v = self.sub_graph_v
@@ -259,7 +258,6 @@ end
 
 MPM.flowFromS = function(self, weak_vertex, potential)
   if weak_vertex == self.spos then return end
-  local sub_graph_flag = self.sub_graph_flag
   local edge_dst, edge_cap = self.edge_dst, self.edge_cap
   local edge_dst_invedge_idx = self.edge_dst_invedge_idx
   local sub_graph_v = self.sub_graph_v
