@@ -220,7 +220,6 @@ MPM.flowToT = function(self, weak_vertex, potential)
   end
   flow_route[weak_vertex] = true
   actual_flow_amount[weak_vertex] = potential
-  local weak_vertex_level = level[weak_vertex]
   local max_level = level[tpos]
   for iv = 1, sub_graph_size do
     local src = sub_graph_v[iv]
@@ -278,7 +277,6 @@ MPM.flowFromS = function(self, weak_vertex, potential)
   end
   flow_route[weak_vertex] = true
   actual_flow_amount[weak_vertex] = potential
-  local weak_vertex_level = level[weak_vertex]
   local max_level = level[tpos]
   for iv = sub_graph_size, 1, -1 do
     local dst = sub_graph_v[iv]
