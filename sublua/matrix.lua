@@ -15,7 +15,7 @@ local function determinant(mat)
       for i2 = i, n do
         mat[i2][i], mat[i2][swapcol] = mat[i2][swapcol], mat[i2][i]
       end
-      det = bsub(mod, det)
+      det = (mod - det) % mod
     end
     local mii = mat[i][i]
     det = bmul(det, mii)
