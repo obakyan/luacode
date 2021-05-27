@@ -17,9 +17,8 @@ local function bdp_prepare(n, cost)
     for j = 1, n do
       if ti % 2 == 1 then
         cnt = cnt + 1
-        ti = ti - 1
       end
-      ti = ti / 2
+      ti = brs(ti, 1)
     end
     table.insert(stagetask[cnt], i)
   end
@@ -42,10 +41,8 @@ local function bdp_doall(n, alltask, stagetask, cost)
       for j = 1, n do
         if tmp % 2 == 0 then
           -- alltask[used + mul] = alltask[used] + func(to j)
-        else
-          tmp = tmp - 1
         end
-        tmp = tmp / 2
+        tmp = brs(tmp, 1)
         mul = mul * 2
       end
     end
