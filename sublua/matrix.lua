@@ -1,3 +1,50 @@
+local tmpmat = {}
+for i = 1, n do
+  tmpmat[i] = {}
+end
+local tmpvec = {}
+
+local function matmat()
+  for i = 1, n do
+    for j = 1, n do
+      local v = 0
+      for k = 1, n do
+        v = badd(v, bmul(mat[i][k], mat[k][j]))
+      end
+      tmpmat[i][j] = v
+    end
+  end
+  for i = 1, n do for j = 1, n do
+    mat[i][j] = tmpmat[i][j]
+  end end
+end
+
+local function vecmat()
+  for i = 1, n do
+    local v = 0
+    for k = 1, n do
+      v = badd(v, bmul(vec[k], mat[k][i]))
+    end
+    tmpvec[i] = v
+  end
+  for i = 1, n do
+    vec[i] = tmpvec[i]
+  end
+end
+local function matvec()
+  for i = 1, n do
+    local v = 0
+    for k = 1, n do
+      v = badd(v, bmul(mat[i][k], vec[k]))
+    end
+    tmpvec[i] = v
+  end
+  for i = 1, n do
+    vec[i] = tmpvec[i]
+  end
+end
+
+
 -- destructive mat[n][n]
 -- use: mod, bmul, badd, modinv
 local function determinant(mat)
