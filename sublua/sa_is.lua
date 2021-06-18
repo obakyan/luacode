@@ -225,6 +225,5 @@ local function GetLcpa(sufa, sufa_inv)
         spos = 1 < len and len - 1 or 0
       end
     end
-  end
   return lcpa
 end
