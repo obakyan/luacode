@@ -73,11 +73,6 @@ local function SA_IS(data, data_size, word_size)
   end
   -- remove LMS
   for w = 1, word_size do
-    local c = word_pushback_count[w]
-    local offset = word_count_sum[w]
-    for i = 1, c do
-      suffix_array[offset + 1 - i] = -1
-    end
     word_pushback_count[w] = 0
   end
   -- put S
@@ -173,11 +168,6 @@ local function SA_IS(data, data_size, word_size)
   end
   -- remove LMS
   for w = 1, word_size do
-    local c = word_pushback_count[w]
-    local offset = word_count_sum[w]
-    for i = 1, c do
-      suffix_array[offset + 1 - i] = -1
-    end
     word_pushback_count[w] = 0
   end
   -- put S
