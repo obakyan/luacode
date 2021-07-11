@@ -75,3 +75,9 @@ jobs:
         cd sublua/test
         luajit ppuf_basic.lua
         cd ../../
+
+    - name: SAIS test
+      run: |
+        cd sublua/test
+        luajit sais_basic.lua
+        cd ../../

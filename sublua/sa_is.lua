@@ -185,16 +185,18 @@ local function SA_IS(data, data_size, word_size)
   return suffix_array
 end
 
---
-
-local sufa = SA_IS(v, n, 26)
-local sufa_inv = {}
-for i = 1, n do sufa_inv[i] = 0 end
-for i = 1, n do
+local SAIS = {}
+SAIS.create = function(self, data, data_size, word_size)
+  local sufa = SA_IS(data, data_size, word_size)
+  local sufa_inv = {}
+  for i = 1, data_size do sufa_inv[i] = 0 end
+  for i = 1, data_size do
     sufa_inv[sufa[i]] = i
-end
-
-local function GetLcpa(s, sufa, sufa_inv)
+  end
+  self.sufa = sufa
+  self.sufa_inv = sufa_inv
+  -- LCPA
+  local n = data_size
   local lcpa = {}
   for i = 1, n - 1 do lcpa[i] = 0 end
   local spos = 0
@@ -205,7 +207,7 @@ local function GetLcpa(s, sufa, sufa_inv)
       local p1, p2 = sufa[lcppos], sufa[lcppos + 1]
       p1, p2 = p1 + spos, p2 + spos
       while p1 <= n and p2 <= n do
-        if s[p1] == s[p2] then
+        if data[p1] == data[p2] then
           len = len + 1
           p1, p2 = p1 + 1, p2 + 1
         else break
@@ -214,5 +216,9 @@ local function GetLcpa(s, sufa, sufa_inv)
       lcpa[lcppos] = len
       spos = 1 < len and len - 1 or 0
     end
-  return lcpa
+  end
+  self.lcpa = lcpa
 end
+
+--
+return SAIS
