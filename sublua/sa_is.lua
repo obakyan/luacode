@@ -204,26 +204,25 @@ for i = 1, n do
     sufa_inv[sufa[i]] = i
 end
 
-local function GetLcpa(sufa, sufa_inv)
+local function GetLcpa(s, sufa, sufa_inv)
   local lcpa = {}
   for i = 1, n - 1 do lcpa[i] = 0 end
-    local spos = 0
-    for i = 1, n do
-      local lcppos = sufa_inv[i]
-      if lcppos < n then
-        local len = spos
-        local p1, p2 = sufa[lcppos], sufa[lcppos + 1]
-        p1, p2 = p1 + spos, p2 + spos
-        while p1 <= n and p2 <= n do
-          if str:sub(p1, p1) == str:sub(p2, p2) then
-            len = len + 1
-            p1, p2 = p1 + 1, p2 + 1
-          else break
-          end
+  local spos = 0
+  for i = 1, n do
+    local lcppos = sufa_inv[i]
+    if lcppos < n then
+      local len = spos
+      local p1, p2 = sufa[lcppos], sufa[lcppos + 1]
+      p1, p2 = p1 + spos, p2 + spos
+      while p1 <= n and p2 <= n do
+        if s[p1] == s[p2] then
+          len = len + 1
+          p1, p2 = p1 + 1, p2 + 1
+        else break
         end
-        lcpa[lcppos] = len
-        spos = 1 < len and len - 1 or 0
       end
+      lcpa[lcppos] = len
+      spos = 1 < len and len - 1 or 0
     end
   end
   return lcpa
