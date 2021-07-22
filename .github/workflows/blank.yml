@@ -81,3 +81,9 @@ jobs:
         cd sublua/test
         luajit sais_basic.lua
         cd ../../
+
+    - name: SparseTable test
+      run: |
+        cd sublua/test
+        luajit sptable_basic.lua
+        cd ../../
