@@ -89,6 +89,17 @@ end
 -- for 10^9 + 7
 -- (31623^2) % 1000000007 = 14122
 
+local mfl = math.floor
+local mod = 1000000007
+local half = 500000004
+local dlim = 1000000000000000
+local function bmul(x, y)
+  if x * y < dlim then return (x * y) % mod end
+  local x1, y1 = mfl(x / 31623), mfl(y / 31623)
+  local x0, y0 = x - x1 * 31623, y - y1 * 31623
+  return (x1 * y1 * 14122 + (x1 * y0 + x0 * y1) * 31623 + x0 * y0) % mod
+end
+
 -- for 998244353
 -- (31596^2) % 998244353 = 62863
 local mod = 998244353
