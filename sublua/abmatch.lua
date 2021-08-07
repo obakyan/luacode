@@ -75,11 +75,8 @@ ABmatch.makeAugPath = function(self)
           invs[b][invcnt[b]] = a
         end
       else
-        if lvmax == lvinf then
-          lvmax = level[a]
-        end
-        if padded[b] then
-        else
+        lvmax = level[a]
+        if not padded[b] then
           padded[b] = true
           psize = psize + 1
           p[psize] = b
@@ -124,6 +121,7 @@ ABmatch.restore = function(self, bend, lvend)
       taskpos = taskpos - 1
     else
       if invpos[b] == invcnt[b] then
+        level[src[b]] = -1
         taskpos = taskpos - 1
       else
         local ip = invpos[b] + 1
@@ -174,5 +172,5 @@ ABmatch.new = function(an, bn)
   return obj
 end
 
---
+-- test: https://yukicoder.me/submissions/687330
 return ABmatch
