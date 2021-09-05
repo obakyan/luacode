@@ -87,3 +87,9 @@ jobs:
         cd sublua/test
         luajit sptable_basic.lua
         cd ../../
+
+    - name: RBTree test
+      run: |
+        cd sublua/test
+        luajit rbtree_basic.lua
+        cd ../../
