@@ -72,5 +72,6 @@ local function tfft_coef_detect_helper(size, modlow)
   return mod, w, ninv, winv
 end
 
-local mod, w, ninv, winv = tfft_coef_detect_helper(15, 2147483648)
+-- local mod, w, ninv, winv = tfft_coef_detect_helper(15, 2147483648)
+local mod, w, ninv, winv = tfft_coef_detect_helper(18, 998244352)
 print(mod, w, ninv, winv)
