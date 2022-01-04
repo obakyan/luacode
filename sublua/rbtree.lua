@@ -4,12 +4,6 @@ Reference:
 http://wwwa.pikara.ne.jp/okojisan/rb-tree/index.html
 ]]
 
---[[
-ADD: self.w
-[Done] push, pop, rotationL,R,LR,RL
-[TBD] access, check
-]]
-
 local mfl, mce = math.floor, math.ceil
 local band, bor = bit.band, bit.bor
 
