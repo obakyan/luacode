@@ -87,7 +87,9 @@ RBTree.rotateRL = function(self, idx, right_idx, rightleft_idx)
   if 0 < l[rightleft_idx] then w[rightleft_idx] = w[rightleft_idx] + w[l[rightleft_idx]] end
   if 0 < l[right_idx] then w[rightleft_idx] = w[rightleft_idx] - w[l[right_idx]] end
 end
-RBTree.create = function(self, max_node_count)
+RBTree.create = function(self, max_node_count, lt)
+  self.lt = lt
+  if not lt then self.lt = function(a, b) return a < b end end
   self.node_count = 0
   self.root = 0
   self.free_nodes = {}
@@ -105,12 +107,13 @@ RBTree.push = function(self, key, value)
   local parent, granp = 0, 0
   local l, r, k, v = self.l, self.r, self.key, self.value
   local w = self.w
+  local lt = self.lt
   cur_idx = self.root
   while 0 < cur_idx do
     w[cur_idx] = w[cur_idx] + 1
     node_idxes_by_rank[cur_rank] = cur_idx
     cur_rank = cur_rank + 1
-    if key < k[cur_idx] then
+    if lt(key, k[cur_idx]) then
       cur_idx = l[cur_idx]
     else
       cur_idx = r[cur_idx]
@@ -124,7 +127,7 @@ RBTree.push = function(self, key, value)
     self.root = cur_idx
   else
     parent = node_idxes_by_rank[cur_rank - 1]
-    if key < k[parent] then
+    if lt(key, k[parent]) then
       l[parent] = cur_idx
     else
       r[parent] = cur_idx
@@ -167,6 +170,7 @@ end
 RBTree.remove = function(self, key)
   local l, r, k, v = self.l, self.r, self.key, self.value
   local w = self.w
+  local lt = self.lt
   local node_idxes_by_rank = {}
   local cur_idx = 0
   local cur_rank = 1
@@ -175,11 +179,11 @@ RBTree.remove = function(self, key)
   cur_idx = self.root
   while 0 < cur_idx do
     node_idxes_by_rank[cur_rank] = cur_idx
-    if k[cur_idx] == key then
+    if not lt(k[cur_idx], key) and not lt(key, k[cur_idx]) then
       break
     end
     cur_rank = cur_rank + 1
-    if key < k[cur_idx] then
+    if lt(key, k[cur_idx]) then
       cur_idx = l[cur_idx]
     else
       cur_idx = r[cur_idx]
@@ -350,10 +354,11 @@ end
 
 RBTree.getLeft = function(self, comp_key)
   local l, r, k, v = self.l, self.r, self.key, self.value
+  local lt = self.lt
   local ret_key, ret_value = nil, nil
   local cur_idx = self.root
   while 0 < cur_idx do
-    if k[cur_idx] <= comp_key then
+    if not lt(comp_key, k[cur_idx]) then
       ret_key, ret_value = k[cur_idx], v[cur_idx]
       cur_idx = r[cur_idx]
     else
@@ -365,10 +370,11 @@ end
 
 RBTree.getRight = function(self, comp_key)
   local l, r, k, v = self.l, self.r, self.key, self.value
+  local lt = self.lt
   local ret_key, ret_value = nil, nil
   local cur_idx = self.root
   while 0 < cur_idx do
-    if k[cur_idx] < comp_key then
+    if lt(k[cur_idx], comp_key) then
       cur_idx = r[cur_idx]
     else
       ret_key, ret_value = k[cur_idx], v[cur_idx]
@@ -401,10 +407,10 @@ RBTree.access = function(self, pos)
   return ret_key, ret_value
 end
 
-RBTree.new = function(n)
+RBTree.new = function(n, lt)
   local obj = {}
   setmetatable(obj, {__index = RBTree})
-  obj:create(n)
+  obj:create(n, lt)
   return obj
 end
 
