@@ -33,6 +33,9 @@ for irep = 1, rep do
       left, lvalue = rb:getLeft(t[j])
       assert(left == t[j])
       assert(left + lvalue == 0)
+      local center, cvalue = rb:access(j)
+      assert(t[j] == center)
+      assert(center + cvalue == 0)
     end
     local rmpos = rnd(1, i)
     rb:remove(t[rmpos])

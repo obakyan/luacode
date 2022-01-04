@@ -3,6 +3,13 @@ Reference:
 "Red-Black Tree by Java & Python"
 http://wwwa.pikara.ne.jp/okojisan/rb-tree/index.html
 ]]
+
+--[[
+ADD: self.w
+[Done] push, pop, rotationL,R,LR,RL
+[TBD] access, check
+]]
+
 local mfl, mce = math.floor, math.ceil
 local band, bor = bit.band, bit.bor
 
@@ -36,31 +43,49 @@ RBTree.setBlack = function(self, node_idx)
 end
 RBTree.rotateL = function(self, idx, right_idx)
   local l, r = self.l, self.r
-  local k, v = self.key, self.value
+  local k, v, w = self.key, self.value, self.w
   r[idx], r[right_idx], l[right_idx], l[idx] = r[right_idx], l[right_idx], l[idx], right_idx
   k[idx], k[right_idx] = k[right_idx], k[idx]
-  v[idx], v[right_idx] = v[right_idx], v[idx]  
+  v[idx], v[right_idx] = v[right_idx], v[idx]
+  if 0 < r[idx] then w[right_idx] = w[right_idx] - w[r[idx]] end
+  if 0 < l[right_idx] then w[right_idx] = w[right_idx] + w[l[right_idx]] end
 end
 RBTree.rotateR = function(self, idx, left_idx)
   local l, r = self.l, self.r
-  local k, v = self.key, self.value
+  local k, v, w = self.key, self.value, self.w
   l[idx], l[left_idx], r[left_idx], r[idx] = l[left_idx], r[left_idx], r[idx], left_idx
   k[idx], k[left_idx] = k[left_idx], k[idx]
   v[idx], v[left_idx] = v[left_idx], v[idx]
+  if 0 < l[idx] then w[left_idx] = w[left_idx] - w[l[idx]] end
+  if 0 < r[left_idx] then w[left_idx] = w[left_idx] + w[r[left_idx]] end
 end
 RBTree.rotateLR = function(self, idx, left_idx, leftright_idx)
   local l, r = self.l, self.r
-  local k, v = self.key, self.value
+  local k, v, w = self.key, self.value, self.w
   r[left_idx], l[leftright_idx], r[leftright_idx], r[idx] = l[leftright_idx], r[leftright_idx], r[idx], leftright_idx
   k[idx], k[leftright_idx] = k[leftright_idx], k[idx]
   v[idx], v[leftright_idx] = v[leftright_idx], v[idx]
+  if 0 < l[leftright_idx] then
+    w[left_idx] = w[left_idx] - 1 - w[l[leftright_idx]]
+  else
+    w[left_idx] = w[left_idx] - 1
+  end
+  if 0 < r[leftright_idx] then w[leftright_idx] = w[leftright_idx] + w[r[leftright_idx]] end
+  if 0 < r[left_idx] then w[leftright_idx] = w[leftright_idx] - w[r[left_idx]] end
 end
 RBTree.rotateRL = function(self, idx, right_idx, rightleft_idx)
   local l, r = self.l, self.r
-  local k, v = self.key, self.value
+  local k, v, w = self.key, self.value, self.w
   l[right_idx], r[rightleft_idx], l[rightleft_idx], l[idx] = r[rightleft_idx], l[rightleft_idx], l[idx], rightleft_idx
   k[idx], k[rightleft_idx] = k[rightleft_idx], k[idx]
   v[idx], v[rightleft_idx] = v[rightleft_idx], v[idx]
+  if 0 < r[rightleft_idx] then
+    w[right_idx] = w[right_idx] - 1 - w[r[rightleft_idx]]
+  else
+    w[right_idx] = w[right_idx] - 1
+  end
+  if 0 < l[rightleft_idx] then w[rightleft_idx] = w[rightleft_idx] + w[l[rightleft_idx]] end
+  if 0 < l[right_idx] then w[rightleft_idx] = w[rightleft_idx] - w[l[right_idx]] end
 end
 RBTree.create = function(self, max_node_count)
   self.node_count = 0
@@ -68,6 +93,7 @@ RBTree.create = function(self, max_node_count)
   self.free_nodes = {}
   for i = 1, max_node_count do self.free_nodes[i] = i end
   self.l, self.r, self.key, self.value = {}, {}, {}, {}
+  self.w = {}
   self.colors = {}
   self:initColor(max_node_count)
 end
@@ -78,8 +104,10 @@ RBTree.push = function(self, key, value)
   local cur_rank = 1
   local parent, granp = 0, 0
   local l, r, k, v = self.l, self.r, self.key, self.value
+  local w = self.w
   cur_idx = self.root
   while 0 < cur_idx do
+    w[cur_idx] = w[cur_idx] + 1
     node_idxes_by_rank[cur_rank] = cur_idx
     cur_rank = cur_rank + 1
     if key < k[cur_idx] then
@@ -91,6 +119,7 @@ RBTree.push = function(self, key, value)
   self.node_count = self.node_count + 1
   cur_idx = self.free_nodes[self.node_count]
   node_idxes_by_rank[cur_rank] = cur_idx
+  w[cur_idx] = 1
   if cur_rank == 1 then
     self.root = cur_idx
   else
@@ -137,6 +166,7 @@ end
 
 RBTree.remove = function(self, key)
   local l, r, k, v = self.l, self.r, self.key, self.value
+  local w = self.w
   local node_idxes_by_rank = {}
   local cur_idx = 0
   local cur_rank = 1
@@ -159,6 +189,10 @@ RBTree.remove = function(self, key)
     return -- NOT FOUND
   end
   if 0 == l[cur_idx] then
+    for i = 1, cur_rank do
+      local z = node_idxes_by_rank[i]
+      w[z] = w[z] - 1
+    end
     self.free_nodes[self.node_count] = cur_idx
     self.node_count = self.node_count - 1
     if cur_rank == 1 then
@@ -194,6 +228,10 @@ RBTree.remove = function(self, key)
       node_idxes_by_rank[cur_rank] = cur_idx
     end
     k[swap_idx], v[swap_idx] = k[cur_idx], v[cur_idx]
+    for i = 1, cur_rank do
+      local z = node_idxes_by_rank[i]
+      w[z] = w[z] - 1
+    end
     parent = node_idxes_by_rank[cur_rank - 1]
     if parent == swap_idx then
       l[parent] = l[cur_idx]
@@ -336,6 +374,29 @@ RBTree.getRight = function(self, comp_key)
       ret_key, ret_value = k[cur_idx], v[cur_idx]
       cur_idx = l[cur_idx]
     end
+  end
+  return ret_key, ret_value
+end
+
+RBTree.access = function(self, pos)
+  local l, r, w = self.l, self.r, self.w
+  local k, v = self.key, self.value
+  if self.node_count < pos then return nil, nil end
+  local cur_idx = self.root
+  local ret_key, ret_value = k[cur_idx], v[cur_idx]
+  while 0 < cur_idx do
+    local li = l[cur_idx]
+    local lw = li == 0 and 0 or w[li]
+    if lw + 1 == pos then break end
+    if pos <= lw then
+      cur_idx = li
+    elseif lw + 1 == pos then
+      break
+    else
+      pos = pos - lw - 1
+      cur_idx = r[cur_idx]
+    end
+    ret_key, ret_value = k[cur_idx], v[cur_idx]
   end
   return ret_key, ret_value
 end
