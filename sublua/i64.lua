@@ -17,6 +17,19 @@ local function lltonumber(str)
   return C.atoll(str)
 end
 
+local function llsqrt(x)
+  local min, max = 0LL, 3000000007LL
+  while 1LL < max - min do
+    local mid = (min + max) / 2LL
+    if mid * mid <= x then
+      min = mid
+    else
+      max = mid
+    end
+  end
+  return min
+end
+
 local function getstr14(v)
   local z = 10000000000000 -- 10^13
   local y = 0
