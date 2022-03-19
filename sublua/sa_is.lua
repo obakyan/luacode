@@ -220,5 +220,36 @@ SAIS.create = function(self, data, data_size, word_size)
   self.lcpa = lcpa
 end
 
+
+local function tblcomp(a, b, bspos)
+-- return a <= b:sub(bspos, #b)
+  local lim = mmi(#a, #b - bspos + 1)
+  for i = 1, lim do
+    if a[i] ~= b[bspos + i - 1] then
+      return a[i] < b[bspos + i - 1] and true or false
+    end
+  end
+  return #a <= #b - bspos + 1
+end
+--experimental
+SAIS.lowerBound = function(self, s)
+  if tblcomp(s, self.data, self.sufa[1]) then
+    return 1
+  end
+  if not tblcomp(s, self.data, self.sufa[self.n]) then
+    return self.n + 1
+  end
+  local min, max = 1, self.n
+  while 1 < max - min do
+    local mid = mfl((min + max) / 2)
+    if tblcomp(s, self.data, self.sufa[mid]) then
+      max = mid
+    else
+      min = mid
+    end
+  end
+  return max
+end
+
 --
 return SAIS
