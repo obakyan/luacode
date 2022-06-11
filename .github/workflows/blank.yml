@@ -93,3 +93,9 @@ jobs:
         cd sublua/test
         luajit rbtree_basic.lua
         cd ../../
+
+    - name: RBSet test
+      run: |
+        cd sublua/test
+        luajit rbset_basic.lua
+        cd ../../
