@@ -1,3 +1,6 @@
+local mmi, mma = math.min, math.max
+local mfl, mce = math.floor, math.ceil
+
 local function SA_IS(data, data_size, word_size)
   local suffix_array = {}
   local type_tag = {} -- -2: L, -1: S, 1~: i-th LMS
@@ -218,6 +221,8 @@ SAIS.create = function(self, data, data_size, word_size)
     end
   end
   self.lcpa = lcpa
+  self.data = data
+  self.n = n
 end
 
 
