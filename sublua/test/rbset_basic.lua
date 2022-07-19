@@ -1,7 +1,7 @@
 package.path = package.path .. ';./../rbset.lua'
 local RBSet = require("rbset")
 
-local rb = RBSet.new(100000)
+local rb = RBSet.new()
 local rep = 50
 math.randomseed(999)
 local rnd = math.random

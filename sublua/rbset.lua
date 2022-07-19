@@ -14,10 +14,6 @@ for i = 2, rb_bitmask_size do
 end
 
 local RBSet = {}
-RBSet.initColor = function(self, max_node_count)
-  local a = mce(max_node_count / rb_bitmask_size)
-  for i = 1, a do self.colors[i] = 0 end
-end
 RBSet.isRed = function(self, node_idx)
   local a = mce(node_idx / rb_bitmask_size)
   local b = node_idx - (a - 1) * rb_bitmask_size
@@ -59,18 +55,25 @@ RBSet.rotateRL = function(self, idx, right_idx, rightleft_idx)
   l[right_idx], r[rightleft_idx], l[rightleft_idx], l[idx] = r[rightleft_idx], l[rightleft_idx], l[idx], rightleft_idx
   k[idx], k[rightleft_idx] = k[rightleft_idx], k[idx]
 end
-RBSet.create = function(self, max_node_count, lt)
+RBSet.create = function(self, lt)
   self.lt = lt
   if not lt then self.lt = function(a, b) return a < b end end
   self.node_count = 0
+  self.capacity = 0
   self.root = 0
   self.free_nodes = {}
-  for i = 1, max_node_count do self.free_nodes[i] = i end
   self.l, self.r, self.key = {}, {}, {}
   self.colors = {}
-  self:initColor(max_node_count)
 end
 RBSet.push = function(self, key)
+  if self.node_count == self.capacity then
+    self.capacity = self.capacity + 1
+    if self.capacity % rb_bitmask_size == 1 then
+      local z = mce(self.capacity / rb_bitmask_size)
+      self.colors[z] = 0
+    end
+    table.insert(self.free_nodes, self.capacity)
+  end
   local node_idxes_by_rank = {}
   local cur_idx = 0
   local cur_rank = 1
@@ -366,10 +369,27 @@ RBSet.getMostRight = function(self)
   return ret_key
 end
 
-RBSet.new = function(n, lt)
+RBSet.enumerateDfs = function(self, p, t)
+  if 0 < p then
+    self:enumerateDfs(self.l[p], t)
+    table.insert(t, self.key[p])
+    self:enumerateDfs(self.r[p], t)
+  end
+end
+
+RBSet.enumerateAll = function(self)
+  local t = {}
+  self:enumerateDfs(self.root, t)
+  return t
+end
+
+local default_compare = function(a, b) return a < b end
+
+RBSet.new = function(lt)
+  if not lt then lt = default_compare end
   local obj = {}
   setmetatable(obj, {__index = RBSet})
-  obj:create(n, lt)
+  obj:create(lt)
   return obj
 end
 
