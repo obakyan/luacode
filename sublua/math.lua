@@ -18,3 +18,23 @@ end
 print(bezout_eq(5, 12))
 -- x = -2, y = 5
 print(bezout_eq(12, 5))
+
+
+-- Linear, but not good performance
+local function getprimes2(x)
+  local primes = {}
+  local lp = {}
+  for i = 1, x do lp[i] = false end
+  for i = 2, x do
+    if not lp[i] then
+      table.insert(primes, i)
+      lp[i] = i
+    end
+    for j = 1, #primes do
+      local p = primes[j]
+      if x < p * i or lp[i] < p then break end
+      lp[p * i] = p
+    end
+  end
+  return primes
+end
