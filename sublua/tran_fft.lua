@@ -1,19 +1,35 @@
 local mfl = math.floor
 local TFFT = {}
 
+--[[
+n = 2^18 = 262144
+mod w ninv winv
+998244353 2192 998240545 79695603
+1007681537 6161 1007677693 534835031
+]]
+--[[
+multiple memo
+1007681537
+(44893^2) % 1007681537 = 18375
+1007681537 = 22446 * 44893 + rem(13259)
+x0, y0 <= 44892
+x1, y1 <= 22446
+max(x1y1*18375+(x1y0+x0y1)*44893+x0y0) < 10^14
+TFFT.mul = function(self, x, y)
+  local x0, y0 = x % 44893, y % 44893
+  local x1, y1 = mfl(x / 44893), mfl(y / 44893)
+  return (x1 * y1 * 18375 + (x1 * y0 + x0 * y1) * 44893 + x0 * y0) % self.mod
+end
+]]
+
 TFFT.initialize = function(self)
   self.size = 18
   -- 2^18
   self.n = 262144
-  -- 1007681537: prime,
-  -- 1007681537 % 262144 = 1
-  self.mod = 1007681537
-  -- (6161^262144) % mod = 1, (6161^131072) % mod ~= 1
-  self.w = 6161
-  -- (1007677693 * 262144) % mod = 1
-  self.ninv = 1007677693
-  -- (534835031 * 6161) % mod = 1
-  self.winv = 534835031
+  self.mod = 998244353
+  self.w = 2192
+  self.ninv = 998240545
+  self.winv = 79695603
   self.p2 = {1}
   for i = 2, self.size do
     self.p2[i] = self.p2[i - 1] * 2
@@ -37,15 +53,10 @@ TFFT.initialize = function(self)
   end
 end
 
--- (44893^2) % 1007681537 = 18375
--- 1007681537 = 22446 * 44893 + rem(13259)
--- x0, y0 <= 44892
--- x1, y1 <= 22446
--- max(x1y1*18375+(x1y0+x0y1)*44893+x0y0) < 10^14
 TFFT.mul = function(self, x, y)
-  local x0, y0 = x % 44893, y % 44893
-  local x1, y1 = mfl(x / 44893), mfl(y / 44893)
-  return (x1 * y1 * 18375 + (x1 * y0 + x0 * y1) * 44893 + x0 * y0) % self.mod
+  local x0, y0 = x % 31596, y % 31596
+  local x1, y1 = mfl(x / 31596), mfl(y / 31596)
+  return (x1 * y1 * 62863 + (x1 * y0 + x0 * y1) * 31596 + x0 * y0) % self.mod
 end
 
 TFFT.add = function(self, x, y) return (x + y) % self.mod end
