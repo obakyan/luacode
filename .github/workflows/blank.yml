@@ -64,6 +64,12 @@ jobs:
         luajit bitbox_basic.lua
         cd ../../
 
+    - name: CHT LiChaoTree test
+      run: |
+        cd sublua/test
+        luajit cht_lichao_basic.lua
+        cd ../../
+
     - name: Heapq test
       run: |
         cd sublua/test
