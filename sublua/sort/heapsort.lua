@@ -1,3 +1,5 @@
+local bls, brs = bit.lshift, bit.rshift
+-- ascend
 local function heapsort(ary, lt)
   local n = #ary
   for i = 1, n do
