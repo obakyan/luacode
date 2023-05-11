@@ -49,11 +49,17 @@ SegTree.getRange = function(self, left, right)
   return ret
 end
 SegTree.update = function(self, idx)
+  local st = self.stage
   for i = self.stagenum - 1, 1, -1 do
     local dst = brs(idx + 1, 1)
     local rem = dst * 4 - 1 - idx
-    self.stage[i][dst] = self.func(self.stage[i + 1][idx], self.stage[i + 1][rem])
-    idx = dst
+    local v = self.func(st[i + 1][idx], st[i + 1][rem])
+    if v == st[i][dst] then
+      break
+    else
+      st[i][dst] = v
+      idx = dst
+    end
   end
 end
 SegTree.setValue = function(self, idx, value, silent)
