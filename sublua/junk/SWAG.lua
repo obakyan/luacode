@@ -29,7 +29,7 @@ SWAG.pop = function(self)
   local suflen = self.suf_len
   if self.pre_idx_len == 0 then
     presum[1] = val[suflen]
-    for i = 2, suf_len - 1 do
+    for i = 2, suflen - 1 do
       presum[i] = self.func(presum[i - 1], val[suflen + 1 - i])
     end
     self.pre_idx_len = suflen - 1
