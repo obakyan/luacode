@@ -38,7 +38,7 @@ SWAG.pop = function(self)
     self.pre_idx_len = self.pre_idx_len - 1
   end
 end
-SWAG.query = function()
+SWAG.query = function(self)
   if self.pre_idx_len == 0 then
     return self.suf_sum[self.suf_len]
   elseif self.suf_len == 0 then
