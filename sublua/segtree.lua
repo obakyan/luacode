@@ -53,6 +53,7 @@ SegTree.update = function(self, idx)
   for i = self.stagenum - 1, 1, -1 do
     local dst = brs(idx + 1, 1)
     local rem = dst * 4 - 1 - idx
+    if rem < idx then rem, idx = idx, rem end
     local v = self.func(st[i + 1][idx], st[i + 1][rem])
     if v == st[i][dst] then
       break
