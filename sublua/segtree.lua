@@ -55,12 +55,11 @@ SegTree.update = function(self, idx)
     local rem = dst * 4 - 1 - idx
     if rem < idx then rem, idx = idx, rem end
     local v = self.func(st[i + 1][idx], st[i + 1][rem])
-    if v == st[i][dst] then
-      break
-    else
-      st[i][dst] = v
-      idx = dst
-    end
+    -- ! for add, multiple, xor, ...
+    -- ! not for min/max
+    -- if v == st[i][dst] then break end
+    st[i][dst] = v
+    idx = dst
   end
 end
 SegTree.setValue = function(self, idx, value, silent)
